@@ -1,144 +1,24 @@
 {
     "type": "FeatureCollection",
     "metadata": {
-        "generated": 1787572070000,
+        "generated": 1787851330000,
         "url": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson",
         "title": "USGS All Earthquakes, Past Hour",
         "status": 200,
         "api": "2.7.0",
-        "count": 13
+        "count": 6
     },
     "features": [
         {
             "type": "Feature",
             "properties": {
-                "mag": 0.72,
-                "place": "11 km WNW of Cobb, CA",
-                "time": 1787571535530,
-                "updated": 1787571630670,
-                "tz": null,
-                "url": "https://earthquake.usgs.gov/earthquakes/eventpage/nc75424122",
-                "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/nc75424122.geojson",
-                "felt": null,
-                "cdi": null,
-                "mmi": null,
-                "alert": null,
-                "status": "automatic",
-                "tsunami": 0,
-                "sig": 8,
-                "net": "nc",
-                "code": "75424122",
-                "ids": ",nc75424122,",
-                "sources": ",nc,",
-                "types": ",nearby-cities,origin,phase-data,",
-                "nst": 11,
-                "dmin": 0.01589,
-                "rms": 0.02,
-                "gap": 113,
-                "magType": "md",
-                "type": "earthquake",
-                "title": "M 0.7 - 11 km WNW of Cobb, CA"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    -122.849670410156,
-                    38.8499984741211,
-                    1.66999995708466
-                ]
-            },
-            "id": "nc75424122"
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "mag": 0.26,
-                "place": "2 km N of The Geysers, CA",
-                "time": 1787571180410,
-                "updated": 1787571275719,
-                "tz": null,
-                "url": "https://earthquake.usgs.gov/earthquakes/eventpage/nc75424117",
-                "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/nc75424117.geojson",
-                "felt": null,
-                "cdi": null,
-                "mmi": null,
-                "alert": null,
-                "status": "automatic",
-                "tsunami": 0,
-                "sig": 1,
-                "net": "nc",
-                "code": "75424117",
-                "ids": ",nc75424117,",
-                "sources": ",nc,",
-                "types": ",nearby-cities,origin,phase-data,",
-                "nst": 8,
-                "dmin": 0.007793,
-                "rms": 0.02,
-                "gap": 74,
-                "magType": "md",
-                "type": "earthquake",
-                "title": "M 0.3 - 2 km N of The Geysers, CA"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    -122.760330200195,
-                    38.7928352355957,
-                    2.17000007629395
-                ]
-            },
-            "id": "nc75424117"
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "mag": 0.88,
-                "place": "10 km E of Coso Junction, CA",
-                "time": 1787571089140,
-                "updated": 1787571296762,
-                "tz": null,
-                "url": "https://earthquake.usgs.gov/earthquakes/eventpage/ci41535056",
-                "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/ci41535056.geojson",
-                "felt": null,
-                "cdi": null,
-                "mmi": null,
-                "alert": null,
-                "status": "automatic",
-                "tsunami": 0,
-                "sig": 12,
-                "net": "ci",
-                "code": "41535056",
-                "ids": ",ci41535056,",
-                "sources": ",ci,",
-                "types": ",nearby-cities,origin,phase-data,",
-                "nst": 18,
-                "dmin": 0.05833,
-                "rms": 0.1,
-                "gap": 65,
-                "magType": "ml",
-                "type": "earthquake",
-                "title": "M 0.9 - 10 km E of Coso Junction, CA"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    -117.840333333333,
-                    36.0603333333333,
-                    2.67
-                ]
-            },
-            "id": "ci41535056"
-        },
-        {
-            "type": "Feature",
-            "properties": {
                 "mag": 2.6,
-                "place": "19 km N of Pilot Point, Alaska",
-                "time": 1787571077446,
-                "updated": 1787571351726,
+                "place": "3 km N of Sterling, Alaska",
+                "time": 1787850333195,
+                "updated": 1787850405262,
                 "tz": null,
-                "url": "https://earthquake.usgs.gov/earthquakes/eventpage/aka2026qsyeyt",
-                "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/aka2026qsyeyt.geojson",
+                "url": "https://earthquake.usgs.gov/earthquakes/eventpage/aka2026qyxkno",
+                "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/aka2026qyxkno.geojson",
                 "felt": null,
                 "cdi": null,
                 "mmi": null,
@@ -147,78 +27,38 @@
                 "tsunami": 0,
                 "sig": 104,
                 "net": "ak",
-                "code": "a2026qsyeyt",
-                "ids": ",aka2026qsyeyt,",
+                "code": "a2026qyxkno",
+                "ids": ",aka2026qyxkno,",
                 "sources": ",ak,",
                 "types": ",origin,phase-data,",
-                "nst": 63,
-                "dmin": 0.4,
-                "rms": 0.7,
-                "gap": 95,
-                "magType": "ml",
-                "type": "earthquake",
-                "title": "M 2.6 - 19 km N of Pilot Point, Alaska"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    -157.549,
-                    57.735,
-                    189.9
-                ]
-            },
-            "id": "aka2026qsyeyt"
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "mag": 2.7,
-                "place": "92 km SE of Ugashik, Alaska",
-                "time": 1787570670868,
-                "updated": 1787570751112,
-                "tz": null,
-                "url": "https://earthquake.usgs.gov/earthquakes/eventpage/aka2026qsxzcf",
-                "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/aka2026qsxzcf.geojson",
-                "felt": null,
-                "cdi": null,
-                "mmi": null,
-                "alert": null,
-                "status": "automatic",
-                "tsunami": 0,
-                "sig": 112,
-                "net": "ak",
-                "code": "a2026qsxzcf",
-                "ids": ",aka2026qsxzcf,",
-                "sources": ",ak,",
-                "types": ",origin,phase-data,",
-                "nst": 40,
-                "dmin": 0.6,
+                "nst": 65,
+                "dmin": 0.3,
                 "rms": 0.6,
-                "gap": 183,
+                "gap": 54,
                 "magType": "ml",
                 "type": "earthquake",
-                "title": "M 2.7 - 92 km SE of Ugashik, Alaska"
+                "title": "M 2.6 - 3 km N of Sterling, Alaska"
             },
             "geometry": {
                 "type": "Point",
                 "coordinates": [
-                    -156.153,
-                    57.026,
-                    5
+                    -150.763,
+                    60.573,
+                    52.4
                 ]
             },
-            "id": "aka2026qsxzcf"
+            "id": "aka2026qyxkno"
         },
         {
             "type": "Feature",
             "properties": {
                 "mag": 1.5,
-                "place": "55 km SSW of Whites City, New Mexico",
-                "time": 1787570599801,
-                "updated": 1787570820597,
+                "place": "58 km SSW of Whites City, New Mexico",
+                "time": 1787850137707,
+                "updated": 1787850321311,
                 "tz": null,
-                "url": "https://earthquake.usgs.gov/earthquakes/eventpage/tx2026qqghrp",
-                "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/tx2026qqghrp.geojson",
+                "url": "https://earthquake.usgs.gov/earthquakes/eventpage/tx2026qweqnb",
+                "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/tx2026qweqnb.geojson",
                 "felt": null,
                 "cdi": null,
                 "mmi": null,
@@ -227,315 +67,195 @@
                 "tsunami": 0,
                 "sig": 35,
                 "net": "tx",
-                "code": "2026qqghrp",
-                "ids": ",tx2026qqghrp,",
+                "code": "2026qweqnb",
+                "ids": ",tx2026qweqnb,",
+                "sources": ",tx,",
+                "types": ",origin,phase-data,",
+                "nst": 20,
+                "dmin": 0.1,
+                "rms": 0.3,
+                "gap": 91,
+                "magType": "ml",
+                "type": "earthquake",
+                "title": "M 1.5 - 58 km SSW of Whites City, New Mexico"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -104.606,
+                    31.688,
+                    3.1025
+                ]
+            },
+            "id": "tx2026qweqnb"
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "mag": 1.7,
+                "place": "62 km S of Whites City, New Mexico",
+                "time": 1787849905964,
+                "updated": 1787850095075,
+                "tz": null,
+                "url": "https://earthquake.usgs.gov/earthquakes/eventpage/tx2026qweorg",
+                "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/tx2026qweorg.geojson",
+                "felt": null,
+                "cdi": null,
+                "mmi": null,
+                "alert": null,
+                "status": "automatic",
+                "tsunami": 0,
+                "sig": 44,
+                "net": "tx",
+                "code": "2026qweorg",
+                "ids": ",tx2026qweorg,",
                 "sources": ",tx,",
                 "types": ",origin,phase-data,",
                 "nst": 24,
                 "dmin": 0,
-                "rms": 0.3,
-                "gap": 103,
+                "rms": 0.5,
+                "gap": 92,
                 "magType": "ml",
                 "type": "earthquake",
-                "title": "M 1.5 - 55 km SSW of Whites City, New Mexico"
+                "title": "M 1.7 - 62 km S of Whites City, New Mexico"
             },
             "geometry": {
                 "type": "Point",
                 "coordinates": [
-                    -104.585,
-                    31.712,
-                    2.788
+                    -104.488,
+                    31.621,
+                    1.9078
                 ]
             },
-            "id": "tx2026qqghrp"
+            "id": "tx2026qweorg"
         },
         {
             "type": "Feature",
             "properties": {
-                "mag": 0.56,
-                "place": "10 km ENE of Coso Junction, CA",
-                "time": 1787570331580,
-                "updated": 1787570542650,
+                "mag": 0.46,
+                "place": "17 km ESE of Anza, CA",
+                "time": 1787849871650,
+                "updated": 1787850081555,
                 "tz": null,
-                "url": "https://earthquake.usgs.gov/earthquakes/eventpage/ci41535048",
-                "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/ci41535048.geojson",
+                "url": "https://earthquake.usgs.gov/earthquakes/eventpage/ci41537576",
+                "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/ci41537576.geojson",
                 "felt": null,
                 "cdi": null,
                 "mmi": null,
                 "alert": null,
                 "status": "automatic",
                 "tsunami": 0,
-                "sig": 5,
+                "sig": 3,
                 "net": "ci",
-                "code": "41535048",
-                "ids": ",ci41535048,",
-                "sources": ",ci,",
-                "types": ",nearby-cities,origin,phase-data,",
-                "nst": 17,
-                "dmin": 0.04858,
-                "rms": 0.08,
-                "gap": 62,
-                "magType": "ml",
-                "type": "earthquake",
-                "title": "M 0.6 - 10 km ENE of Coso Junction, CA"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    -117.838833333333,
-                    36.0706666666667,
-                    2.65
-                ]
-            },
-            "id": "ci41535048"
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "mag": 2,
-                "place": "39 km ESE of Malaga, New Mexico",
-                "time": 1787570057767,
-                "updated": 1787570528790,
-                "tz": null,
-                "url": "https://earthquake.usgs.gov/earthquakes/eventpage/tx2026qqfzxc",
-                "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/tx2026qqfzxc.geojson",
-                "felt": null,
-                "cdi": null,
-                "mmi": null,
-                "alert": null,
-                "status": "automatic",
-                "tsunami": 0,
-                "sig": 62,
-                "net": "tx",
-                "code": "2026qqfzxc",
-                "ids": ",tx2026qqfzxc,",
-                "sources": ",tx,",
-                "types": ",origin,phase-data,",
-                "nst": 36,
-                "dmin": 0,
-                "rms": 0.4,
-                "gap": 62,
-                "magType": "ml",
-                "type": "earthquake",
-                "title": "M 2.0 - 39 km ESE of Malaga, New Mexico"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    -103.707,
-                    32.058,
-                    8.1137
-                ]
-            },
-            "id": "tx2026qqfzxc"
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "mag": 2.6,
-                "place": "98 km ENE of Ouzinkie, Alaska",
-                "time": 1787569679860,
-                "updated": 1787569782878,
-                "tz": null,
-                "url": "https://earthquake.usgs.gov/earthquakes/eventpage/aka2026qsxksj",
-                "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/aka2026qsxksj.geojson",
-                "felt": null,
-                "cdi": null,
-                "mmi": null,
-                "alert": null,
-                "status": "automatic",
-                "tsunami": 0,
-                "sig": 104,
-                "net": "ak",
-                "code": "a2026qsxksj",
-                "ids": ",aka2026qsxksj,",
-                "sources": ",ak,",
-                "types": ",origin,phase-data,",
-                "nst": 59,
-                "dmin": 0.8,
-                "rms": 0.8,
-                "gap": 186,
-                "magType": "ml",
-                "type": "earthquake",
-                "title": "M 2.6 - 98 km ENE of Ouzinkie, Alaska"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    -151.042,
-                    58.35,
-                    2.7
-                ]
-            },
-            "id": "aka2026qsxksj"
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "mag": 0.66,
-                "place": "18 km NW of Ocotillo, CA",
-                "time": 1787569651510,
-                "updated": 1787569862881,
-                "tz": null,
-                "url": "https://earthquake.usgs.gov/earthquakes/eventpage/ci41535040",
-                "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/ci41535040.geojson",
-                "felt": null,
-                "cdi": null,
-                "mmi": null,
-                "alert": null,
-                "status": "automatic",
-                "tsunami": 0,
-                "sig": 7,
-                "net": "ci",
-                "code": "41535040",
-                "ids": ",ci41535040,",
+                "code": "41537576",
+                "ids": ",ci41537576,",
                 "sources": ",ci,",
                 "types": ",nearby-cities,origin,phase-data,",
                 "nst": 21,
-                "dmin": 0.05967,
-                "rms": 0.16,
-                "gap": 76,
+                "dmin": 0.08555,
+                "rms": 0.14,
+                "gap": 67,
                 "magType": "ml",
                 "type": "earthquake",
-                "title": "M 0.7 - 18 km NW of Ocotillo, CA"
+                "title": "M 0.5 - 17 km ESE of Anza, CA"
             },
             "geometry": {
                 "type": "Point",
                 "coordinates": [
-                    -116.143666666667,
-                    32.837,
-                    10.55
+                    -116.502166666667,
+                    33.513,
+                    12.65
                 ]
             },
-            "id": "ci41535040"
+            "id": "ci41537576"
         },
         {
             "type": "Feature",
             "properties": {
-                "mag": 2.9,
-                "place": "51 km SSW of Whites City, New Mexico",
-                "time": 1787569533708,
-                "updated": 1787570581129,
+                "mag": 0.9,
+                "place": "35 km W of Mentone, Texas",
+                "time": 1787849388636,
+                "updated": 1787850821999,
                 "tz": null,
-                "url": "https://earthquake.usgs.gov/earthquakes/eventpage/tx2026qqfrzq",
-                "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/tx2026qqfrzq.geojson",
+                "url": "https://earthquake.usgs.gov/earthquakes/eventpage/tx2026qwehmx",
+                "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/tx2026qwehmx.geojson",
                 "felt": null,
                 "cdi": null,
                 "mmi": null,
                 "alert": null,
                 "status": "reviewed",
                 "tsunami": 0,
-                "sig": 129,
+                "sig": 12,
                 "net": "tx",
-                "code": "2026qqfrzq",
-                "ids": ",us6000tn3d,tx2026qqfrzq,",
-                "sources": ",us,tx,",
+                "code": "2026qwehmx",
+                "ids": ",tx2026qwehmx,",
+                "sources": ",tx,",
                 "types": ",origin,phase-data,",
-                "nst": 15,
+                "nst": 22,
                 "dmin": 0,
                 "rms": 0.2,
-                "gap": 73,
-                "magType": "ml",
-                "type": "earthquake",
-                "title": "M 2.9 - 51 km SSW of Whites City, New Mexico"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    -104.543,
-                    31.732,
-                    5.6897
-                ]
-            },
-            "id": "tx2026qqfrzq"
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "mag": 1.6,
-                "place": "49 km NW of Rampart, Alaska",
-                "time": 1787569107224,
-                "updated": 1787569180716,
-                "tz": null,
-                "url": "https://earthquake.usgs.gov/earthquakes/eventpage/aka2026qsxcmg",
-                "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/aka2026qsxcmg.geojson",
-                "felt": null,
-                "cdi": null,
-                "mmi": null,
-                "alert": null,
-                "status": "automatic",
-                "tsunami": 0,
-                "sig": 39,
-                "net": "ak",
-                "code": "a2026qsxcmg",
-                "ids": ",aka2026qsxcmg,",
-                "sources": ",ak,",
-                "types": ",origin,phase-data,",
-                "nst": 11,
-                "dmin": 0.2,
-                "rms": 0.3,
-                "gap": 83,
-                "magType": "ml",
-                "type": "earthquake",
-                "title": "M 1.6 - 49 km NW of Rampart, Alaska"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    -150.841,
-                    65.853,
-                    4
-                ]
-            },
-            "id": "aka2026qsxcmg"
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "mag": 0.91,
-                "place": "10 km ENE of Coso Junction, CA",
-                "time": 1787568910060,
-                "updated": 1787569108872,
-                "tz": null,
-                "url": "https://earthquake.usgs.gov/earthquakes/eventpage/ci41535032",
-                "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/ci41535032.geojson",
-                "felt": null,
-                "cdi": null,
-                "mmi": null,
-                "alert": null,
-                "status": "automatic",
-                "tsunami": 0,
-                "sig": 13,
-                "net": "ci",
-                "code": "41535032",
-                "ids": ",ci41535032,",
-                "sources": ",ci,",
-                "types": ",nearby-cities,origin,phase-data,",
-                "nst": 17,
-                "dmin": 0.05215,
-                "rms": 0.1,
                 "gap": 64,
                 "magType": "ml",
                 "type": "earthquake",
-                "title": "M 0.9 - 10 km ENE of Coso Junction, CA"
+                "title": "M 0.9 - 35 km W of Mentone, Texas"
             },
             "geometry": {
                 "type": "Point",
                 "coordinates": [
-                    -117.8395,
-                    36.0668333333333,
-                    2.59
+                    -103.972,
+                    31.71,
+                    7.8302
                 ]
             },
-            "id": "ci41535032"
+            "id": "tx2026qwehmx"
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "mag": 1.04,
+                "place": "10 km SW of Idyllwild, CA",
+                "time": 1787849314310,
+                "updated": 1787849931620,
+                "tz": null,
+                "url": "https://earthquake.usgs.gov/earthquakes/eventpage/ci41537560",
+                "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/ci41537560.geojson",
+                "felt": null,
+                "cdi": null,
+                "mmi": null,
+                "alert": null,
+                "status": "automatic",
+                "tsunami": 0,
+                "sig": 17,
+                "net": "ci",
+                "code": "41537560",
+                "ids": ",ci41537560,",
+                "sources": ",ci,",
+                "types": ",focal-mechanism,nearby-cities,origin,phase-data,",
+                "nst": 52,
+                "dmin": 0.07438,
+                "rms": 0.15,
+                "gap": 27,
+                "magType": "ml",
+                "type": "earthquake",
+                "title": "M 1.0 - 10 km SW of Idyllwild, CA"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -116.797333333333,
+                    33.6841666666667,
+                    15.81
+                ]
+            },
+            "id": "ci41537560"
         }
     ],
     "bbox": [
-        -157.549,
-        31.712,
-        1.6699999570847,
-        -103.707,
-        65.853,
-        189.9
+        -150.763,
+        31.621,
+        1.9078,
+        -103.972,
+        60.573,
+        52.4
     ]
 }

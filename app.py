@@ -26,7 +26,7 @@ if not hasattr(ast, 'Num'):
         def n(self):
             return self.value
 
-        @s.setter
+        @n.setter
         def n(self, value):
             self.value = value
 

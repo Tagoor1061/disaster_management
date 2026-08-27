@@ -5,3 +5,8 @@ instance/
 *.db
 *.sqlite
 *.sqlite3
+venv/
+*.log
+flask-err.log
+flask-out.log
+.vercel/
