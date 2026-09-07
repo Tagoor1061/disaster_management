@@ -8,7 +8,7 @@ class User(UserMixin, db.Model):  # type: ignore
     username = db.Column(db.String(50), unique=True, nullable=False)  # type: ignore
     email = db.Column(db.String(120), unique=True, nullable=False)  # type: ignore
     phone = db.Column(db.String(20), nullable=True)  # type: ignore
-    password_hash = db.Column(db.String(128), nullable=False)  # type: ignore
+    password_hash = db.Column(db.String(255), nullable=False)  # type: ignore
     role = db.Column(db.String(20), default="user")  # type: ignore  # "admin" or "user"
     last_login = db.Column(db.DateTime, nullable=True)  # type: ignore
 
