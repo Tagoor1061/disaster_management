@@ -1790,6 +1790,61 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Add Draft Marking Helper
+    function addDisasterDraftItem(shapeType, geoData, layer) {
+        const titleInput = document.getElementById('adm-marker-title');
+        const advInput = document.getElementById('adm-marker-advisory');
+
+        let dType = normalizeDisasterType(activeDisaster === 'all' ? 'floods' : activeDisaster);
+        if (dType === 'all') {
+            const t = (titleInput && titleInput.value) ? titleInput.value : '';
+            dType = normalizeDisasterType(t, 'floods');
+        }
+        const dMeta = DISASTER_META[dType] || { name: 'Floods', icon: '🌧️', defaultAdvisory: 'Official municipal disaster safety zone.' };
+
+        const title = (titleInput && titleInput.value.trim()) ? titleInput.value.trim() : `${dMeta.name} Risk Zone (${shapeType.toUpperCase()})`;
+        const advisory = (advInput && advInput.value.trim()) ? advInput.value.trim() : (dMeta.defaultAdvisory || 'Municipal hazard advisory active.');
+
+        const item = {
+            disaster_type: dType,
+            title: title,
+            description: advisory,
+            risk_level: activeRisk,
+            color: activeColor,
+            shape_type: shapeType,
+            geojson_data: geoData,
+            layer: layer
+        };
+
+        const badgeBg = activeHex;
+        const riskLabel = activeRisk.toUpperCase();
+
+        layer.bindPopup(`
+            <div style="font-family:sans-serif;min-width:180px;">
+                <div style="font-size:1.1em;font-weight:bold;color:#0f172a;display:flex;align-items:center;gap:4px;">
+                    ${dMeta.icon} ${title} <span style="font-size:0.75em;color:#e65100;">[Draft]</span>
+                </div>
+                <div style="background:${badgeBg};color:white;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:bold;display:inline-block;margin:6px 0;">
+                    ${riskLabel} • ${dMeta.name}
+                </div>
+                ${advisory ? `<div style="font-size:12px;color:#334155;margin-bottom:6px;line-height:1.4;">${advisory}</div>` : ''}
+                <div style="color:#e65100;font-size:11px;font-weight:600;">⚠️ Click "Save Markings to Database" to commit</div>
+            </div>
+        `);
+
+        layer.on('click', function(e) {
+            if (activeTool === 'eraser') {
+                L.DomEvent.stopPropagation(e);
+                draftDisasterGroup.removeLayer(layer);
+                unsavedDisasterMarkings = unsavedDisasterMarkings.filter(m => m.layer !== layer);
+                updateAdminStatus();
+            }
+        });
+
+        unsavedDisasterMarkings.push(item);
+        updateAdminStatus();
+    }
+
     // =========================================================================
     // 5.1 MOBILE & DESKTOP PLACE MARKER AT ANY LOCATION CONTROLLER
     // =========================================================================

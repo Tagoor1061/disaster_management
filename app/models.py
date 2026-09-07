@@ -91,6 +91,11 @@ class ZoneMarking(db.Model):
         import json
         try:
             geo_data = json.loads(self.geojson_data) if self.geojson_data else {}
+            if isinstance(geo_data, str):
+                try:
+                    geo_data = json.loads(geo_data)
+                except Exception:
+                    pass
         except Exception:
             geo_data = {}
             

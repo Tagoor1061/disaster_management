@@ -112,6 +112,9 @@ def save_markings():
 
     saved_items = []
     for item in markings_list:
+        if not item or not isinstance(item, dict):
+            continue
+
         raw_disaster = item.get('disaster_type')
         title = item.get('title') or ''
         description = item.get('description', '')
@@ -127,6 +130,13 @@ def save_markings():
             
         final_title = title.strip() or f"{disaster_type.capitalize()} Risk Zone ({shape_type.capitalize()})"
 
+        if isinstance(geojson_data, (dict, list)):
+            geo_str = json.dumps(geojson_data)
+        elif isinstance(geojson_data, str) and geojson_data.strip():
+            geo_str = geojson_data.strip()
+        else:
+            geo_str = "{}"
+
         marking = ZoneMarking(
             disaster_type=disaster_type,
             title=final_title,
@@ -134,18 +144,25 @@ def save_markings():
             risk_level=risk_level,
             color=color,
             shape_type=shape_type,
-            geojson_data=json.dumps(geojson_data),
+            geojson_data=geo_str,
             created_by_id=current_user.id
         )
         db.session.add(marking)
         saved_items.append(marking)
 
-    db.session.commit()
-    return jsonify({
-        'status': 'success',
-        'message': f'Saved {len(saved_items)} disaster marking(s) successfully.',
-        'markings': [m.to_dict() for m in saved_items]
-    })
+    if saved_items:
+        db.session.commit()
+        return jsonify({
+            'status': 'success',
+            'message': f'Saved {len(saved_items)} disaster marking(s) successfully.',
+            'markings': [m.to_dict() for m in saved_items]
+        })
+    else:
+        return jsonify({
+            'status': 'warning',
+            'message': 'No valid disaster markings found to save.',
+            'markings': []
+        })
 
 @bp.route('/api/markings/<int:marking_id>', methods=['DELETE'])
 def delete_marking(marking_id):
