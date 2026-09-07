@@ -5,6 +5,42 @@
 {% block title %}Services{% endblock %}
 
 {% block content %}
+<nav class="main-navbar">
+    <a href="{{ url_for('main.home') }}" class="main-navbar-brand">
+        <img src="{{ url_for('static', filename='img/final_logo.png') }}" alt="Guntur Logo" class="logo" onerror="this.style.display='none'">
+        <span class="main-title">Suraksha Kavach
+            <div class="main-subtitle">DEPARTMENT OF GOVERNMENT MUNICIPAL CORPORATION</div>
+        </span>
+    </a>
+    <div class="main-navbar-actions">
+        <button type="button" class="mobile-nav-toggle-btn" id="mobile-nav-toggle" aria-label="Open Navigation Menu">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+</nav>
+
+<nav class="secondary-navbar">
+    <ul>
+        <li><a href="{{ url_for('main.home') }}">Home</a></li>
+        <li><a href="{{ url_for('main.learn') }}">Learn & Quiz</a></li>
+        <li><a href="{{ url_for('news.news') }}">News</a></li>
+        <li><a href="{{ url_for('services.services') }}">Services</a></li>
+        <li><a href="{{ url_for('about.about') }}">About</a></li>
+        {% if current_user.is_authenticated %}
+            {% if current_user.role == 'admin' %}
+                <li><a href="{{ url_for('main.admin_dashboard') }}">Admin Dashboard</a></li>
+            {% else %}
+                <li><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
+            {% endif %}
+            <li><a href="{{ url_for('viewmap.view_map') }}">View Map</a></li>
+            <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+        {% else %}
+            <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+            <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+        {% endif %}
+    </ul>
+</nav>
+
 <section class="services-section">
     <h1>Municipal Services - Guntur Municipal Corporation</h1>
 
@@ -167,9 +203,10 @@
 
 <style>
 .services-section {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
+    max-width: 1560px;
+    width: 97%;
+    margin: 2rem auto;
+    padding: 2.2rem;
 }
 
 .services-grid {

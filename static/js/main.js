@@ -1,32 +1,93 @@
-// Mobile Menu Toggle (for future use)
+// Mobile Menu Toggle & Navigation Drawer Controller
 document.addEventListener('DOMContentLoaded', function() {
-  // Initialize any JavaScript plugins or custom functionality
-  
-  // Example: Mobile menu toggle
-  const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-  const mainNav = document.querySelector('nav ul');
-  
-  if (mobileMenuToggle) {
-    mobileMenuToggle.addEventListener('click', function() {
-      mainNav.classList.toggle('active');
-    });
+  const mobileDrawer = document.getElementById('mobile-nav-drawer');
+  const mobileBackdrop = document.getElementById('mobile-nav-backdrop');
+  const drawerCloseBtn = document.getElementById('mobile-drawer-close');
+
+  function openMobileNav() {
+    if (mobileDrawer && mobileBackdrop) {
+      mobileDrawer.classList.add('open');
+      mobileBackdrop.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
   }
+
+  function closeMobileNav() {
+    if (mobileDrawer && mobileBackdrop) {
+      mobileDrawer.classList.remove('open');
+      mobileBackdrop.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  }
+
+  // Delegated click listener for any mobile menu toggle button on the page
+  document.addEventListener('click', function(e) {
+    const toggleBtn = e.target.closest('#mobile-nav-toggle, .mobile-nav-toggle-btn, [data-action="open-mobile-nav"]');
+    if (toggleBtn) {
+      e.preventDefault();
+      openMobileNav();
+    }
+  });
+
+  if (drawerCloseBtn) {
+    drawerCloseBtn.addEventListener('click', closeMobileNav);
+  }
+
+  if (mobileBackdrop) {
+    mobileBackdrop.addEventListener('click', closeMobileNav);
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && mobileDrawer && mobileDrawer.classList.contains('open')) {
+      closeMobileNav();
+    }
+  });
+
+  // Mobile Drawer Accordion Submenus
+  document.querySelectorAll('.mobile-accordion-toggle').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('data-target');
+      const panel = document.getElementById(targetId);
+      if (panel) {
+        const isExpanded = this.classList.contains('expanded');
+        if (isExpanded) {
+          this.classList.remove('expanded');
+          panel.classList.remove('show');
+        } else {
+          this.classList.add('expanded');
+          panel.classList.add('show');
+        }
+      }
+    });
+  });
+
+  // Highlight Current Active Page Link in Mobile Drawer
+  const currentPath = window.location.pathname;
+  document.querySelectorAll('.mobile-drawer-body a').forEach(function(link) {
+    if (link.getAttribute('href') === currentPath) {
+      link.classList.add('active-page');
+      // If inside an accordion, open it
+      const parentAccordion = link.closest('.mobile-accordion-panel');
+      if (parentAccordion) {
+        parentAccordion.classList.add('show');
+        const trigger = document.querySelector(`.mobile-accordion-toggle[data-target="${parentAccordion.id}"]`);
+        if (trigger) trigger.classList.add('expanded');
+      }
+    }
+  });
 
   // Smooth scrolling for anchor links
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
-      e.preventDefault();
-      document.querySelector(this.getAttribute('href')).scrollIntoView({
-        behavior: 'smooth'
-      });
-    });
-  });
-
-  // Form validation example (can be extended)
-  const forms = document.querySelectorAll('form');
-  forms.forEach(form => {
-    form.addEventListener('submit', function(e) {
-      // Add form validation logic here
+      const targetId = this.getAttribute('href');
+      if (targetId && targetId !== '#') {
+        const el = document.querySelector(targetId);
+        if (el) {
+          e.preventDefault();
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
     });
   });
 });
@@ -76,15 +137,20 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Hide loading overlay when page is fully loaded with a 0.5 second delay
-window.addEventListener('load', () => {
+// Hide loading overlay safely
+function hideLoadingOverlay() {
   const loadingOverlay = document.getElementById('loading-overlay');
   if (loadingOverlay) {
+    loadingOverlay.style.opacity = '0';
+    loadingOverlay.style.pointerEvents = 'none';
     setTimeout(() => {
       loadingOverlay.style.display = 'none';
-    }, 500); // 500 milliseconds = 0.5 seconds
+    }, 250);
   }
-});
+}
+window.addEventListener('DOMContentLoaded', hideLoadingOverlay);
+window.addEventListener('load', hideLoadingOverlay);
+setTimeout(hideLoadingOverlay, 600);
 
 // Push Notification Functions
 function requestNotificationPermission() {

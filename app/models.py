@@ -33,6 +33,7 @@ class Issue(db.Model):
     status = db.Column(db.String(20), default='pending')
     timestamp = db.Column(db.DateTime, server_default=db.func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    image_url = db.Column(db.String(300), nullable=True)
 
     user = db.relationship('User', backref=db.backref('issues', lazy=True))
 
@@ -74,11 +75,13 @@ class PushSubscription(db.Model):
 
 class ZoneMarking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), default='Zone Marking')
-    risk_level = db.Column(db.String(20), nullable=False, default='safe')  # 'safe', 'moderate', 'danger'
-    color = db.Column(db.String(20), nullable=False, default='green')       # 'green', 'yellow', 'red' or hex
-    shape_type = db.Column(db.String(20), nullable=False)                    # 'pencil', 'marker', 'polygon', 'circle', 'rectangle'
-    geojson_data = db.Column(db.Text, nullable=False)                        # JSON string containing coordinates & properties
+    disaster_type = db.Column(db.String(50), nullable=False, default='floods')  # 'floods', 'cyclones', 'tsunamis', 'earthquakes', 'winds', 'rainfall', 'landslides'
+    title = db.Column(db.String(100), default='Disaster Risk Zone')
+    description = db.Column(db.Text, nullable=True, default='')                  # Advisory notes, evacuation guidance, or hazard details
+    risk_level = db.Column(db.String(20), nullable=False, default='safe')         # 'safe', 'moderate', 'danger', 'severe'
+    color = db.Column(db.String(20), nullable=False, default='green')              # 'green', 'yellow', 'red', 'purple', etc.
+    shape_type = db.Column(db.String(20), nullable=False)                         # 'pencil', 'marker', 'polygon', 'circle', 'rectangle'
+    geojson_data = db.Column(db.Text, nullable=False)                             # JSON string containing coordinates & properties
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     created_by_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
 
@@ -90,9 +93,25 @@ class ZoneMarking(db.Model):
             geo_data = json.loads(self.geojson_data) if self.geojson_data else {}
         except Exception:
             geo_data = {}
+            
+        # Canonical disaster normalization
+        raw_type = (self.disaster_type or 'floods').strip().lower()
+        alias_map = {
+            'cyclone': 'cyclones', 'cyclones': 'cyclones',
+            'flood': 'floods', 'floods': 'floods',
+            'tsunami': 'tsunamis', 'tsunamis': 'tsunamis',
+            'earthquake': 'earthquakes', 'earthquakes': 'earthquakes',
+            'wind': 'winds', 'winds': 'winds',
+            'rainfall': 'rainfall', 'rain': 'rainfall',
+            'landslide': 'landslides', 'landslides': 'landslides'
+        }
+        clean_type = alias_map.get(raw_type, raw_type)
+
         return {
             'id': self.id,
+            'disaster_type': clean_type,
             'title': self.title,
+            'description': self.description or '',
             'risk_level': self.risk_level,
             'color': self.color,
             'shape_type': self.shape_type,

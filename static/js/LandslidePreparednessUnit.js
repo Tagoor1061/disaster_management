@@ -406,6 +406,13 @@
             attribution: '© OpenStreetMap | GMC Landslide Early Warning'
         }).addTo(map);
 
+        if (typeof L.control.locationSearch === 'function') {
+            L.control.locationSearch({
+                position: 'topright',
+                placeholder: '🔍 Search location in landslide map...'
+            }).addTo(map);
+        }
+
         // ---- Layer 1: DEM hazard-zone polygons ---------------------------------
         (live?.terrain?.zones || []).forEach(z => {
             if (!z.polygon) return;

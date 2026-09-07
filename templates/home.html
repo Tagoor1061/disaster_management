@@ -5,10 +5,17 @@
 {% block content %}
 
 <nav class="main-navbar">
-    <img src="{{ url_for('static', filename='img/final_logo.png') }}" alt="Guntur Logo" class="logo" onerror="this.style.display='none'">
-    <span class="main-title">Suraksha Kavach
-        <div class="main-subtitle">DEPARTMENT OF GOVERNMENT MUNICIPAL CORPORATION </div>
-    </span>
+    <a href="{{ url_for('main.home') }}" class="main-navbar-brand">
+        <img src="{{ url_for('static', filename='img/final_logo.png') }}" alt="Guntur Logo" class="logo" onerror="this.style.display='none'">
+        <span class="main-title">Suraksha Kavach
+            <div class="main-subtitle">DEPARTMENT OF GOVERNMENT MUNICIPAL CORPORATION</div>
+        </span>
+    </a>
+    <div class="main-navbar-actions">
+        <button type="button" class="mobile-nav-toggle-btn" id="mobile-nav-toggle" aria-label="Open Navigation Menu">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
 </nav>
 
 <nav class="secondary-navbar">
@@ -142,13 +149,14 @@
 }
 /* Section Base Container */
 .home-container-section {
-    max-width: 1200px;
+    max-width: 1560px;
+    width: 97%;
     margin: 3rem auto;
     padding: 2.5rem;
     background: rgba(255, 255, 255, 0.96);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
-    border-radius: 16px;
+    border-radius: 18px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
     border: 1px solid rgba(255, 255, 255, 0.4);
     scroll-margin-top: 2rem;

@@ -39,7 +39,7 @@
             }
         ],
         "status": "default",
-        "fetched_at": "2026-08-23 22:36:30"
+        "fetched_at": "2026-09-07 15:59:46"
     },
     "district_rainfall": {
         "districts": [
@@ -81,7 +81,7 @@
             }
         ],
         "status": "default",
-        "fetched_at": "2026-08-23 22:36:28"
+        "fetched_at": "2026-09-07 15:59:40"
     },
     "state_rainfall": {
         "state": "Andhra Pradesh",
@@ -89,7 +89,7 @@
         "normal_mm": 47.8,
         "departure_percent": 43.1,
         "status": "default",
-        "fetched_at": "2026-08-23 22:36:29"
+        "fetched_at": "2026-09-07 15:59:41"
     },
-    "fetched_at": "2026-08-23 22:36:30"
+    "fetched_at": "2026-09-07 15:59:46"
 }

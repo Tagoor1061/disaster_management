@@ -6,10 +6,17 @@
 
 {% block content %}
 <nav class="main-navbar">
-    <img src="{{ url_for('static', filename='img/final_logo.png') }}" alt="Guntur Logo" class="logo" onerror="this.style.display='none'">
-    <span class="main-title">Suraksha Kavach
-        <div class="main-subtitle">DEPARTMENT OF GOVERNMENT MUNICIPAL CORPORATION</div>
-    </span>
+    <a href="{{ url_for('main.home') }}" class="main-navbar-brand">
+        <img src="{{ url_for('static', filename='img/final_logo.png') }}" alt="Guntur Logo" class="logo" onerror="this.style.display='none'">
+        <span class="main-title">Suraksha Kavach
+            <div class="main-subtitle">DEPARTMENT OF GOVERNMENT MUNICIPAL CORPORATION</div>
+        </span>
+    </a>
+    <div class="main-navbar-actions">
+        <button type="button" class="mobile-nav-toggle-btn" id="mobile-nav-toggle" aria-label="Open Navigation Menu">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
 </nav>
 
 <nav class="secondary-navbar">
@@ -34,7 +41,7 @@
     </ul>
 </nav>
 
-<section class="about-container" style="max-width: 1100px; margin: 2rem auto; padding: 2rem 1.5rem;">
+<section class="about-container" style="max-width: 1560px; width: 97%; margin: 2rem auto; padding: 2.2rem 1.5rem;">
     <!-- Hero Banner -->
     <div style="background: linear-gradient(135deg, #2E8B57 0%, #1e5c38 100%); color: white; border-radius: 16px; padding: 2.5rem; text-align: center; box-shadow: var(--shadow-medium); margin-bottom: 2.5rem;">
         <h1 style="font-size: 2.5rem; margin-bottom: 0.8rem; color: white;">About Suraksha Kavach</h1>

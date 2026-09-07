@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/effects3d.css') }}?v=3">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/map_search.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/location_risk.css') }}">
 </head>
 <body class="{% block body_class %}{% endblock %}">
     <div id="loading-overlay">
@@ -16,14 +18,130 @@
             <p class="loading-text">Loading Suraksha Kavach...</p>
         </div>
     </div>
+    <!-- Mobile Navigation Drawer Backdrop & Panel -->
+    <div id="mobile-nav-backdrop" class="mobile-nav-backdrop"></div>
+    <aside id="mobile-nav-drawer" class="mobile-nav-drawer" aria-label="Mobile Navigation">
+        <div class="mobile-drawer-header">
+            <div class="mobile-drawer-brand">
+                <img src="{{ url_for('static', filename='img/final_logo.png') }}" alt="GMC Logo" class="mobile-drawer-logo" onerror="this.style.display='none'">
+                <div>
+                    <div class="mobile-drawer-title">Suraksha Kavach</div>
+                    <div class="mobile-drawer-sub">Guntur Municipal Corp</div>
+                </div>
+            </div>
+            <button type="button" id="mobile-drawer-close" class="mobile-drawer-close" aria-label="Close menu">&times;</button>
+        </div>
+
+        <div class="mobile-drawer-body">
+            <!-- Emergency Quick Bar -->
+            <div style="background:#fee2e2; border:1px solid #fca5a5; border-radius:10px; padding:8px 12px; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between;">
+                <span style="color:#991b1b; font-size:0.82rem; font-weight:700;"><i class="fas fa-phone-alt"></i> GMC 24/7 Helpline:</span>
+                <a href="tel:1077" style="background:#dc2626; color:white; padding:3px 10px; border-radius:6px; text-decoration:none; font-weight:800; font-size:0.82rem;">1077 / 112</a>
+            </div>
+
+            <!-- Primary Navigation -->
+            <div class="mobile-nav-group-title">Main Navigation</div>
+            <a href="{{ url_for('main.home') }}" class="mobile-nav-link">
+                <span class="mobile-nav-link-content"><i class="fas fa-home"></i> Home</span>
+            </a>
+
+            <!-- Natural Disasters Accordion -->
+            <button type="button" class="mobile-nav-link mobile-accordion-toggle" data-target="mob-disasters-panel">
+                <span class="mobile-nav-link-content"><i class="fas fa-shield-alt" style="color:#ea580c;"></i> Natural Disasters</span>
+                <i class="fas fa-chevron-down mobile-accordion-caret"></i>
+            </button>
+            <div id="mob-disasters-panel" class="mobile-accordion-panel">
+                <a href="{{ url_for('main.natural_disasters') }}" class="mobile-accordion-item">🚨 All Hazards Overview</a>
+                <a href="{{ url_for('main.disaster_cyclone') }}" class="mobile-accordion-item">🌀 Cyclone Section</a>
+                <a href="{{ url_for('main.disaster_tsunami') }}" class="mobile-accordion-item">🌊 Tsunami Section</a>
+                <a href="{{ url_for('main.disaster_floods') }}" class="mobile-accordion-item">🌧️ Floods & Inundation</a>
+                <a href="{{ url_for('main.disaster_earthquakes') }}" class="mobile-accordion-item">🏚️ Earthquakes & Seismic</a>
+                <a href="{{ url_for('main.disaster_winds') }}" class="mobile-accordion-item">💨 Severe Winds</a>
+                <a href="{{ url_for('main.disaster_rainfall') }}" class="mobile-accordion-item">🌧️ Rainfall & Cloudburst</a>
+                <a href="{{ url_for('main.disaster_landslides') }}" class="mobile-accordion-item">⛰️ Landslides & Slopes</a>
+            </div>
+
+            <!-- Report Issue Accordion -->
+            <button type="button" class="mobile-nav-link mobile-accordion-toggle" data-target="mob-report-panel">
+                <span class="mobile-nav-link-content"><i class="fas fa-bullhorn" style="color:#0284c7;"></i> Report Civic Issue</span>
+                <i class="fas fa-chevron-down mobile-accordion-caret"></i>
+            </button>
+            <div id="mob-report-panel" class="mobile-accordion-panel">
+                <a href="{{ url_for('main.issue_reporting_page') }}" class="mobile-accordion-item">🏛️ Submit Issue Report</a>
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('main.dashboard') }}" class="mobile-accordion-item">📊 Track My Reports</a>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="mobile-accordion-item">🔑 Login to Track Reports</a>
+                {% endif %}
+            </div>
+
+            <!-- Interactive GIS Map -->
+            <a href="{{ url_for('viewmap.view_map') }}" class="mobile-nav-link">
+                <span class="mobile-nav-link-content"><i class="fas fa-map-marked-alt" style="color:#16a34a;"></i> Interactive GIS Map</span>
+            </a>
+
+            <!-- Learn & Quiz -->
+            <a href="{{ url_for('main.learn') }}" class="mobile-nav-link">
+                <span class="mobile-nav-link-content"><i class="fas fa-graduation-cap" style="color:#7c3aed;"></i> Learn & Quiz</span>
+            </a>
+
+            <!-- News -->
+            <a href="{{ url_for('news.news') }}" class="mobile-nav-link">
+                <span class="mobile-nav-link-content"><i class="fas fa-newspaper" style="color:#d97706;"></i> News & Alerts</span>
+            </a>
+
+            <!-- Services -->
+            <a href="{{ url_for('services.services') }}" class="mobile-nav-link">
+                <span class="mobile-nav-link-content"><i class="fas fa-hands-helping" style="color:#0d9488;"></i> Municipal Services</span>
+            </a>
+
+            <!-- About -->
+            <a href="{{ url_for('about.about') }}" class="mobile-nav-link">
+                <span class="mobile-nav-link-content"><i class="fas fa-info-circle" style="color:#475569;"></i> About GMC</span>
+            </a>
+
+            <!-- User Account Section -->
+            <div class="mobile-nav-group-title" style="margin-top:10px;">User Account</div>
+            {% if current_user.is_authenticated %}
+                {% if current_user.role == 'admin' %}
+                    <a href="{{ url_for('main.admin_dashboard') }}" class="mobile-nav-link" style="background:#f0f9ff; color:#0369a1; font-weight:700;">
+                        <span class="mobile-nav-link-content"><i class="fas fa-user-shield" style="color:#0284c7;"></i> Admin Dashboard</span>
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('main.dashboard') }}" class="mobile-nav-link" style="background:#f0fdf4; color:#166534; font-weight:700;">
+                        <span class="mobile-nav-link-content"><i class="fas fa-tachometer-alt" style="color:#16a34a;"></i> Citizen Dashboard</span>
+                    </a>
+                {% endif %}
+                <a href="{{ url_for('auth.logout') }}" class="mobile-nav-link" style="color:#dc2626;">
+                    <span class="mobile-nav-link-content"><i class="fas fa-sign-out-alt" style="color:#dc2626;"></i> Logout ({{ current_user.username }})</span>
+                </a>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}" class="mobile-nav-link">
+                    <span class="mobile-nav-link-content"><i class="fas fa-sign-in-alt" style="color:#16a34a;"></i> Login</span>
+                </a>
+                <a href="{{ url_for('auth.register') }}" class="mobile-nav-link">
+                    <span class="mobile-nav-link-content"><i class="fas fa-user-plus" style="color:#0284c7;"></i> Register</span>
+                </a>
+            {% endif %}
+        </div>
+
+        <div class="mobile-drawer-footer">
+            <div>🛡️ <strong>Suraksha Kavach</strong> — Guntur Municipal Corp</div>
+            <div style="font-size:0.75rem; color:#94a3b8;">Civic Emergency & Disaster Management Portal</div>
+        </div>
+    </aside>
+
     <main>
     {% block content %}{% endblock %}
     </main>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="{{ url_for('static', filename='js/map_search.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/LocationRiskSearchWidget.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='js/DisasterChartComponent.js') }}"></script>
     <script src="{{ url_for('static', filename='js/effects3d.js') }}?v=1"></script>
+    <script src="{{ url_for('static', filename='js/LanguageTranslationManager.js') }}"></script>
     <script>
         // Service Worker Registration for Push Notifications
         if ('serviceWorker' in navigator) {

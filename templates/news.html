@@ -6,10 +6,17 @@
 
 {% block content %}
 <nav class="main-navbar">
-    <img src="{{ url_for('static', filename='img/final_logo.png') }}" alt="Guntur Logo" class="logo" onerror="this.style.display='none'">
-    <span class="main-title">Suraksha Kavach
-        <div class="main-subtitle">DEPARTMENT OF GOVERNMENT MUNICIPAL CORPORATION</div>
-    </span>
+    <a href="{{ url_for('main.home') }}" class="main-navbar-brand">
+        <img src="{{ url_for('static', filename='img/final_logo.png') }}" alt="Guntur Logo" class="logo" onerror="this.style.display='none'">
+        <span class="main-title">Suraksha Kavach
+            <div class="main-subtitle">DEPARTMENT OF GOVERNMENT MUNICIPAL CORPORATION</div>
+        </span>
+    </a>
+    <div class="main-navbar-actions">
+        <button type="button" class="mobile-nav-toggle-btn" id="mobile-nav-toggle" aria-label="Open Navigation Menu">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
 </nav>
 
 <nav class="secondary-navbar">
@@ -34,7 +41,7 @@
     </ul>
 </nav>
 
-<section style="max-width: 1100px; margin: 2rem auto; padding: 2rem 1.5rem;">
+<section style="max-width: 1560px; width: 97%; margin: 2rem auto; padding: 2.2rem 1.5rem;">
     <!-- Banner -->
     <div style="background: linear-gradient(135deg, #1976d2 0%, #0d47a1 100%); color: white; border-radius: 16px; padding: 2rem; text-align: center; box-shadow: var(--shadow-medium); margin-bottom: 2rem;">
         <h1 style="font-size: 2.3rem; margin: 0 0 0.5rem 0; color: white;">📰 Live News & Municipal Updates</h1>

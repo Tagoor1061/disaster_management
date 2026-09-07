@@ -2,14 +2,21 @@
 
 {% block body_class %}other-page{% endblock %}
 
-{% block title %}Issue Reporting to the Government{% endblock %}
+{% block title %}Issue Reporting to the Government — Suraksha Kavach{% endblock %}
 
 {% block content %}
 <nav class="main-navbar">
-    <img src="{{ url_for('static', filename='img/final_logo.png') }}" alt="Guntur Logo" class="logo" onerror="this.style.display='none'">
-    <span class="main-title">Suraksha Kavach
-        <div class="main-subtitle">DEPARTMENT OF GOVERNMENT MUNICIPAL CORPORATION </div>
-    </span>
+    <a href="{{ url_for('main.home') }}" class="main-navbar-brand">
+        <img src="{{ url_for('static', filename='img/final_logo.png') }}" alt="Guntur Logo" class="logo" onerror="this.style.display='none'">
+        <span class="main-title">Suraksha Kavach
+            <div class="main-subtitle">DEPARTMENT OF GOVERNMENT MUNICIPAL CORPORATION</div>
+        </span>
+    </a>
+    <div class="main-navbar-actions">
+        <button type="button" class="mobile-nav-toggle-btn" id="mobile-nav-toggle" aria-label="Open Navigation Menu">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
 </nav>
 
 <nav class="secondary-navbar">
@@ -66,7 +73,7 @@
 <div class="marquee-container">
     <div class="marquee">
         GOVERNMENT CIVIC ISSUE & GRIEVANCE REPORTING PORTAL
-        <span class="sub-text">Report waterlogging, drainage overflow, potholes & municipal faults directly to municipal officials</span>
+        <span class="sub-text">Report waterlogging, drainage overflow, potholes & municipal faults directly with camera & photo proof</span>
     </div>
 </div>
 
@@ -99,15 +106,15 @@
         <div class="step-card">
             <div class="step-icon">2</div>
             <div>
-                <h3>Describe Issue</h3>
-                <p>Describe the flooding, drainage overflow, pothole, or civic fault in detail.</p>
+                <h3>Describe & Attach Photo</h3>
+                <p>Describe the issue and capture live camera photos or upload gallery images.</p>
             </div>
         </div>
         <div class="step-card">
             <div class="step-icon">3</div>
             <div>
                 <h3>Government Action</h3>
-                <p>Municipal team inspects, acts on-site, and sends instant SMS/email resolution updates.</p>
+                <p>Municipal team inspects, acts on-site, and sends instant resolution updates.</p>
             </div>
         </div>
     </div>
@@ -116,22 +123,74 @@
     <div class="form-card-box">
         <h2><i class="fas fa-file-alt"></i> Submit Civic Issue Report</h2>
 
-        <form method="post" action="{{ url_for('main.report_issue') }}">
+        <form method="post" action="{{ url_for('main.report_issue') }}" enctype="multipart/form-data" id="issue-report-form">
             <div class="form-group">
                 <label for="page-issue-desc" class="form-label">Describe Your Civic Issue *</label>
                 <textarea id="page-issue-desc" name="issue" placeholder="Describe the issue in detail (e.g. Severe waterlogging at main junction, overflowing sewage drain, deep road pothole, dark streetlight)..." required class="form-textarea"></textarea>
             </div>
 
+            <!-- Photo & Camera Evidence Section -->
+            <div class="form-group photo-upload-group">
+                <label class="form-label"><i class="fas fa-camera text-orange"></i> Attach Photo Evidence (Camera & Photos)</label>
+                <p class="photo-hint">Attach a photo using your camera or gallery to speed up official verification.</p>
+
+                <!-- Trigger Action Buttons -->
+                <div class="photo-actions-row">
+                    <button type="button" id="btn-camera" class="btn-photo-action btn-camera">
+                        <i class="fas fa-camera"></i> 📷 Camera
+                    </button>
+                    <button type="button" id="btn-browse-photos" class="btn-photo-action btn-gallery">
+                        <i class="fas fa-images"></i> 🖼️ Choose from Photos / Gallery
+                    </button>
+                </div>
+
+                <!-- Hidden file inputs -->
+                <input type="file" id="issue-camera-input" name="photo" accept="image/*" capture="environment" style="display:none;">
+                <input type="file" id="issue-gallery-input" accept="image/*" style="display:none;">
+                <input type="hidden" id="issue-photo-base64" name="photo_base64" value="">
+
+                <!-- Drag & Drop Zone -->
+                <div id="photo-dropzone" class="photo-dropzone">
+                    <div class="dropzone-inner">
+                        <i class="fas fa-cloud-upload-alt dropzone-icon"></i>
+                        <p><strong>Tap buttons above to open camera or select a photo</strong></p>
+                        <span>Supports JPG, PNG, WEBP, HEIC (Max 15MB)</span>
+                    </div>
+                </div>
+
+                <!-- Photo Preview Card -->
+                <div id="photo-preview-card" class="photo-preview-card" style="display:none;">
+                    <div class="preview-img-wrap">
+                        <img id="photo-preview-img" src="" alt="Issue photo preview">
+                    </div>
+                    <div class="preview-details">
+                        <div class="preview-badge" id="preview-source-badge"><i class="fas fa-check-circle"></i> Photo Ready</div>
+                        <div class="preview-meta">
+                            <span id="preview-filename" class="preview-filename">photo.jpg</span>
+                            <span id="preview-filesize" class="preview-filesize"></span>
+                        </div>
+                        <div class="preview-buttons">
+                            <button type="button" id="btn-remove-photo" class="btn-preview-delete"><i class="fas fa-trash-alt"></i> Remove Photo</button>
+                            <button type="button" id="btn-retake-photo" class="btn-preview-retake"><i class="fas fa-redo"></i> Retake / Replace</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="map-picker-box">
                 <div class="map-picker-header">
-                    <h3><i class="fas fa-map-marker-alt"></i> Pin Location on Interactive Map</h3>
-                    <button type="button" id="page-use-gps" class="btn-gps"><i class="fas fa-crosshairs"></i> Use Current GPS Location</button>
+                    <h3><i class="fas fa-map-marker-alt"></i> Search & Pin Location on Interactive Map</h3>
+                </div>
+
+                <div class="map-search-bar-wrap" style="display:flex; gap:0.8rem; margin-bottom:0.9rem; flex-wrap:wrap; align-items:center;">
+                    <div id="page-map-search-container" style="flex:1; min-width:260px;"></div>
+                    <button type="button" id="page-use-gps" class="btn-gps" style="white-space:nowrap;"><i class="fas fa-crosshairs"></i> Use Current GPS Location</button>
                 </div>
 
                 <div id="page-report-map" class="map-view"></div>
 
                 <div id="page-selected-coords" class="coords-info-box">
-                    💡 Click on the map to set exact issue coordinates
+                    💡 Search location above, use GPS, or click anywhere on the map to set exact issue coordinates
                 </div>
 
                 <input type="hidden" name="latitude" id="page-report-lat" value="{{ request.args.get('latitude', '') }}">
@@ -150,6 +209,61 @@
                 </div>
             {% endif %}
         </form>
+    </div>
+
+    <!-- Live Webcam Viewfinder Modal -->
+    <div id="camera-modal" class="camera-modal" style="display:none;">
+        <div class="camera-modal-backdrop" id="camera-backdrop"></div>
+        <div class="camera-modal-content">
+            <div class="camera-modal-header">
+                <div class="cam-title"><i class="fas fa-camera"></i> Live Camera Viewfinder</div>
+                <div class="cam-header-actions">
+                    <select id="camera-device-select" class="cam-device-select" style="display:none;" title="Select Camera Device"></select>
+                    <button type="button" id="camera-close-btn" class="cam-close-btn" aria-label="Close Camera">&times;</button>
+                </div>
+            </div>
+            <div class="camera-viewport-wrap" id="camera-viewport-wrap">
+                <!-- Loading State -->
+                <div id="camera-loading-state" class="cam-state-overlay" style="display:flex;">
+                    <div class="cam-spinner"></div>
+                    <p style="font-weight:600; font-size:1rem; margin-top:0.8rem;">Connecting to Camera...</p>
+                    <span style="font-size:0.82rem; color:#94a3b8; margin-top:0.3rem;">Please click "Allow" if your browser prompts for camera permission</span>
+                </div>
+
+                <!-- Error State -->
+                <div id="camera-error-state" class="cam-state-overlay cam-error-overlay" style="display:none;">
+                    <div class="cam-error-icon"><i class="fas fa-camera"></i></div>
+                    <h4 id="cam-error-title" style="margin:0.5rem 0 0.3rem 0; font-size:1.1rem; color:#f87171;">Camera Access</h4>
+                    <p id="cam-error-msg" style="margin:0 0 1rem 0; font-size:0.88rem; color:#cbd5e1; max-width:380px; line-height:1.4;">Could not access your webcam stream.</p>
+                    <div class="cam-error-actions" style="display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:center;">
+                        <button type="button" id="btn-open-device-cam" class="btn-cam-retry" style="background:#16a34a;"><i class="fas fa-camera"></i> 📸 Open Device Camera</button>
+                        <button type="button" id="btn-switch-localhost" class="btn-cam-retry" style="background:#0284c7; display:none;"><i class="fas fa-external-link-alt"></i> Open on http://localhost:5000</button>
+                        <button type="button" id="btn-retry-camera" class="btn-cam-retry"><i class="fas fa-redo"></i> Try Again</button>
+                        <button type="button" id="btn-fallback-browse" class="btn-cam-browse"><i class="fas fa-folder-open"></i> Choose Image File</button>
+                    </div>
+                </div>
+
+                <!-- Live Video Element -->
+                <video id="camera-video" autoplay playsinline muted></video>
+                <canvas id="camera-canvas" style="display:none;"></canvas>
+
+                <div class="cam-guide-box" id="cam-guide-box">
+                    <div class="cam-crosshair"></div>
+                    <span class="cam-hint-text">Frame the issue clearly</span>
+                </div>
+            </div>
+            <div class="camera-modal-footer">
+                <button type="button" id="btn-switch-camera" class="btn-cam-switch" title="Switch Camera Device / View">
+                    <i class="fas fa-sync-alt"></i> Switch Camera
+                </button>
+                <button type="button" id="btn-snap-photo" class="btn-cam-snap">
+                    <i class="fas fa-camera"></i> Capture Photo
+                </button>
+                <button type="button" id="btn-cancel-cam" class="btn-cam-cancel">
+                    Cancel
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Issue Categories -->
@@ -172,12 +286,13 @@
 
 <style>
 .reporting-page-container {
-    max-width: 1100px;
+    max-width: 1560px;
+    width: 97%;
     margin: 2rem auto;
-    padding: 2rem;
-    background: rgba(255, 255, 255, 0.96);
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    padding: 2.2rem;
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 18px;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.12);
 }
 
 .reporting-hero {
@@ -275,6 +390,467 @@
     gap: 0.6rem;
 }
 
+.form-group {
+    margin-bottom: 1.8rem;
+}
+
+.form-label {
+    display: block;
+    font-weight: 700;
+    color: #2c3e50;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-textarea {
+    width: 100%;
+    min-height: 130px;
+    padding: 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+    resize: vertical;
+}
+
+.form-textarea:focus {
+    outline: none;
+    border-color: #1976d2;
+    box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.15);
+}
+
+/* Photo Upload Elements */
+.photo-hint {
+    margin: -0.3rem 0 1rem;
+    color: #66788a;
+    font-size: 0.92rem;
+}
+
+.photo-actions-row {
+    display: flex;
+    gap: 0.9rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-photo-action {
+    flex: 1;
+    min-width: 180px;
+    padding: 0.9rem 1.2rem;
+    border-radius: 10px;
+    border: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    font-family: inherit;
+}
+
+.btn-camera {
+    background: linear-gradient(135deg, #e65100 0%, #ff9800 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(230, 81, 0, 0.25);
+}
+.btn-camera:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(230, 81, 0, 0.35);
+}
+
+.btn-gallery {
+    background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(21, 101, 192, 0.25);
+}
+.btn-gallery:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(21, 101, 192, 0.35);
+}
+
+.btn-webcam {
+    background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.25);
+}
+.btn-webcam:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(46, 125, 50, 0.35);
+}
+
+.photo-dropzone {
+    border: 2px dashed #90caf9;
+    background: #f4f9ff;
+    border-radius: 12px;
+    padding: 1.6rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.photo-dropzone:hover, .photo-dropzone.dragover {
+    background: #e3f2fd;
+    border-color: #1976d2;
+}
+
+.dropzone-inner .dropzone-icon {
+    font-size: 2.2rem;
+    color: #1976d2;
+    margin-bottom: 0.5rem;
+}
+
+.dropzone-inner p {
+    margin: 0 0 0.2rem 0;
+    color: #2c3e50;
+    font-size: 0.95rem;
+}
+
+.dropzone-inner span {
+    font-size: 0.8rem;
+    color: #78909c;
+}
+
+.photo-preview-card {
+    background: #ffffff;
+    border: 1px solid #c8e6c9;
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(46, 125, 50, 0.1);
+    flex-wrap: wrap;
+}
+
+.preview-img-wrap {
+    width: 110px;
+    height: 110px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #000;
+    flex-shrink: 0;
+    border: 2px solid #2e7d32;
+}
+
+.preview-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.preview-details {
+    flex: 1;
+    min-width: 200px;
+}
+
+.preview-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 0.25rem 0.65rem;
+    border-radius: 14px;
+    border: 1px solid;
+    margin-bottom: 0.4rem;
+}
+
+.preview-meta {
+    margin-bottom: 0.7rem;
+    font-size: 0.9rem;
+    color: #37474f;
+    font-weight: 600;
+    word-break: break-all;
+}
+
+.preview-filesize {
+    color: #78909c;
+    font-weight: 400;
+    font-size: 0.85rem;
+    margin-left: 0.4rem;
+}
+
+.preview-buttons {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.btn-preview-delete {
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+    padding: 0.45rem 0.9rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.btn-preview-delete:hover { background: #ffcdd2; }
+
+.btn-preview-retake {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+    padding: 0.45rem 0.9rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.btn-preview-retake:hover { background: #c8e6c9; }
+
+/* Camera Viewfinder Modal */
+.camera-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.camera-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+}
+
+.camera-modal-content {
+    position: relative;
+    z-index: 3001;
+    background: #1e293b;
+    border-radius: 16px;
+    max-width: 580px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+    color: #ffffff;
+    border: 1px solid #334155;
+}
+
+.camera-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.85rem 1.2rem;
+    background: #0f172a;
+    border-bottom: 1px solid #334155;
+    gap: 0.8rem;
+}
+
+.cam-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #38bdf8;
+    white-space: nowrap;
+}
+
+.cam-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.cam-device-select {
+    background: #1e293b;
+    color: #e2e8f0;
+    border: 1px solid #475569;
+    padding: 0.35rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    outline: none;
+    max-width: 180px;
+    cursor: pointer;
+}
+.cam-device-select:focus {
+    border-color: #38bdf8;
+}
+
+.cam-close-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 1.6rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    transition: color 0.15s;
+}
+.cam-close-btn:hover { color: #ffffff; }
+
+.camera-viewport-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: #090d16;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.camera-viewport-wrap video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.camera-viewport-wrap video.cam-mirror {
+    transform: scaleX(-1);
+}
+
+.cam-state-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.95);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.cam-spinner {
+    width: 44px;
+    height: 44px;
+    border: 4px solid #334155;
+    border-top: 4px solid #38bdf8;
+    border-radius: 50%;
+    animation: camSpin 0.9s linear infinite;
+}
+@keyframes camSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.cam-error-overlay {
+    background: rgba(15, 23, 42, 0.96);
+}
+.cam-error-icon {
+    font-size: 2.4rem;
+    color: #f87171;
+    margin-bottom: 0.5rem;
+}
+.cam-error-actions {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+.btn-cam-retry {
+    background: #0284c7;
+    color: white;
+    border: none;
+    padding: 0.55rem 1.1rem;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.btn-cam-retry:hover { background: #0369a1; }
+.btn-cam-browse {
+    background: #334155;
+    color: #f1f5f9;
+    border: 1px solid #475569;
+    padding: 0.55rem 1.1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.btn-cam-browse:hover { background: #475569; }
+
+.cam-guide-box {
+    position: absolute;
+    inset: 12%;
+    border: 2px dashed rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cam-hint-text {
+    position: absolute;
+    bottom: -28px;
+    font-size: 0.8rem;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 0.25rem 0.7rem;
+    border-radius: 12px;
+    color: #e2e8f0;
+}
+
+.camera-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.4rem;
+    background: #0f172a;
+    border-top: 1px solid #334155;
+    gap: 0.8rem;
+}
+
+.btn-cam-switch, .btn-cam-cancel {
+    background: #334155;
+    color: #f1f5f9;
+    border: none;
+    padding: 0.65rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: background 0.2s;
+}
+.btn-cam-switch:hover, .btn-cam-cancel:hover { background: #475569; }
+
+.btn-cam-snap {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: #ffffff;
+    border: none;
+    padding: 0.8rem 1.6rem;
+    border-radius: 30px;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+.btn-cam-snap:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
+}
+
 .map-picker-box {
     background: #f8f9fa;
     border-radius: 12px;
@@ -309,10 +885,7 @@
     font-size: 0.9rem;
     transition: all 0.3s;
 }
-
-.btn-gps:hover {
-    background: #1565c0;
-}
+.btn-gps:hover { background: #1565c0; }
 
 .map-view {
     height: 350px;
@@ -344,7 +917,6 @@
     transition: all 0.3s;
     box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
 }
-
 .btn-submit-main:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(25, 118, 210, 0.4);
@@ -423,10 +995,7 @@
     font-size: 0.95rem;
 }
 
-.category-card i {
-    font-size: 1.5rem;
-}
-
+.category-card i { font-size: 1.5rem; }
 .text-blue { color: #1976d2; }
 .text-green { color: #2e7d32; }
 .text-orange { color: #FF851B; }
@@ -451,10 +1020,57 @@
     font-weight: 700;
     transition: all 0.3s;
 }
-
 .btn-back:hover {
     background: #1976d2;
     color: white;
+}
+
+/* Mobile Responsiveness for Issue Reporting */
+@media (max-width: 768px) {
+    .reporting-page-container {
+        margin: 0.8rem auto;
+        padding: 1rem;
+        border-radius: 12px;
+        width: 95%;
+        box-sizing: border-box;
+    }
+    .reporting-hero h1 {
+        font-size: 1.6rem;
+    }
+    .reporting-hero p {
+        font-size: 0.95rem;
+    }
+    .steps-container {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+    }
+    .form-card-box {
+        padding: 1.1rem;
+    }
+    .form-card-box h2 {
+        font-size: 1.3rem;
+    }
+    .photo-actions-row {
+        flex-direction: column;
+    }
+    .btn-photo-action {
+        width: 100%;
+        min-width: unset;
+        box-sizing: border-box;
+    }
+    .map-picker-box {
+        padding: 0.9rem;
+    }
+    .map-view {
+        height: 260px;
+    }
+    .categories-grid {
+        grid-template-columns: 1fr;
+    }
+    .preview-img-wrap {
+        width: 80px;
+        height: 80px;
+    }
 }
 </style>
 {% endblock %}
@@ -464,82 +1080,545 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    if (!window.L || !document.getElementById('page-report-map')) return;
+    /* ---------------- Map Initialization ---------------- */
+    if (window.L && document.getElementById('page-report-map')) {
+        const defaultLatLng = [16.3067, 80.4365];
+        const latInput = document.getElementById('page-report-lat');
+        const lngInput = document.getElementById('page-report-lng');
+        const coordsLabel = document.getElementById('page-selected-coords');
+        const map = L.map('page-report-map').setView(defaultLatLng, 13);
+        let marker = null;
 
-    const defaultLatLng = [16.3067, 80.4365];
-    const latInput = document.getElementById('page-report-lat');
-    const lngInput = document.getElementById('page-report-lng');
-    const coordsLabel = document.getElementById('page-selected-coords');
-    const map = L.map('page-report-map').setView(defaultLatLng, 13);
-    let marker = null;
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+        function setPageLocation(latlng, displayName) {
+            const lat = Number(latlng.lat).toFixed(6);
+            const lng = Number(latlng.lng).toFixed(6);
+            if (latInput) latInput.value = lat;
+            if (lngInput) lngInput.value = lng;
+            if (coordsLabel) {
+                const labelText = displayName ? `✅ Selected: ${displayName} (${Number(lat).toFixed(5)}, ${Number(lng).toFixed(5)})` : `✅ Location Selected: ${Number(lat).toFixed(5)}, ${Number(lng).toFixed(5)}`;
+                coordsLabel.textContent = labelText;
+                coordsLabel.style.background = '#e8f5e9';
+                coordsLabel.style.color = '#2e7d32';
+                coordsLabel.style.borderColor = '#2e7d32';
+            }
 
-    function setPageLocation(latlng) {
-        const lat = Number(latlng.lat).toFixed(6);
-        const lng = Number(latlng.lng).toFixed(6);
-        if (latInput) latInput.value = lat;
-        if (lngInput) lngInput.value = lng;
-        if (coordsLabel) {
-            coordsLabel.textContent = `✅ Location Selected: ${Number(lat).toFixed(5)}, ${Number(lng).toFixed(5)}`;
-            coordsLabel.style.background = '#e8f5e9';
-            coordsLabel.style.color = '#2e7d32';
-            coordsLabel.style.borderColor = '#2e7d32';
-        }
-
-        if (marker) {
-            marker.setLatLng(latlng);
-            return;
-        }
-
-        marker = L.marker(latlng, { draggable: true }).addTo(map);
-        marker.on('dragend', function(event) {
-            setPageLocation(event.target.getLatLng());
-        });
-    }
-
-    map.on('click', function(event) {
-        setPageLocation(event.latlng);
-    });
-
-    if (latInput && lngInput && latInput.value && lngInput.value) {
-        const existing = L.latLng(Number(latInput.value), Number(lngInput.value));
-        setPageLocation(existing);
-        map.setView(existing, 16);
-    }
-
-    const gpsBtn = document.getElementById('page-use-gps');
-    if (gpsBtn) {
-        gpsBtn.addEventListener('click', function() {
-            if (!navigator.geolocation) {
-                if (coordsLabel) coordsLabel.textContent = '⚠️ Your browser does not support location access. Click the map instead.';
+            if (marker) {
+                marker.setLatLng(latlng);
                 return;
             }
 
-            if (coordsLabel) {
-                coordsLabel.textContent = '🔍 Locating your position via GPS...';
-                coordsLabel.style.background = '#e3f2fd';
-                coordsLabel.style.color = '#1976d2';
+            marker = L.marker(latlng, { draggable: true }).addTo(map);
+            marker.on('dragend', function(event) {
+                setPageLocation(event.target.getLatLng());
+            });
+        }
+
+        // Initialize Universal Location Search
+        if (window.initLeafletSearch) {
+            window.initLeafletSearch(map, {
+                mountSelector: '#page-map-search-container',
+                placeholder: '🔍 Search any city, area, street, landmark, or lat,lng...',
+                onSelect: function(res) {
+                    setPageLocation(res.latlng, res.displayName);
+                }
+            });
+        }
+
+        map.on('click', function(event) {
+            setPageLocation(event.latlng);
+        });
+
+        if (latInput && lngInput && latInput.value && lngInput.value) {
+            const existing = L.latLng(Number(latInput.value), Number(lngInput.value));
+            setPageLocation(existing);
+            map.setView(existing, 16);
+        }
+
+        const gpsBtn = document.getElementById('page-use-gps');
+        if (gpsBtn) {
+            gpsBtn.addEventListener('click', function() {
+                if (!navigator.geolocation) {
+                    if (coordsLabel) coordsLabel.textContent = '⚠️ Your browser does not support location access. Click the map instead.';
+                    return;
+                }
+
+                if (coordsLabel) {
+                    coordsLabel.textContent = '🔍 Locating your position via GPS...';
+                    coordsLabel.style.background = '#e3f2fd';
+                    coordsLabel.style.color = '#1976d2';
+                }
+
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const current = L.latLng(position.coords.latitude, position.coords.longitude);
+                        setPageLocation(current);
+                        map.setView(current, 16);
+                    },
+                    function() {
+                        if (coordsLabel) {
+                            coordsLabel.textContent = '📍 GPS permission denied. Please click on the map to set location.';
+                            coordsLabel.style.background = '#ffebee';
+                            coordsLabel.style.color = '#d32f2f';
+                    },
+                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+                );
+            });
+        }
+
+        // Overlay Multi-Hazard Disaster Markings on Issue Map
+        const DISASTER_META = {
+            floods: { name: 'Floods', icon: '🌧️', color: '#0284c7' },
+            cyclones: { name: 'Cyclones', icon: '🌀', color: '#ea580c' },
+            tsunamis: { name: 'Tsunamis', icon: '🌊', color: '#0891b2' },
+            earthquakes: { name: 'Earthquakes', icon: '🏚️', color: '#9333ea' },
+            winds: { name: 'Severe Winds', icon: '💨', color: '#0d9488' },
+            rainfall: { name: 'Rainfall', icon: '🌧️', color: '#2563eb' },
+            landslides: { name: 'Landslides', icon: '⛰️', color: '#b45309' }
+        };
+        const HEX_MAP = { safe: '#16a34a', moderate: '#d97706', danger: '#dc2626', severe: '#7c3aed', green: '#16a34a', yellow: '#d97706', red: '#dc2626', purple: '#7c3aed' };
+
+        fetch('/api/markings')
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success' && Array.isArray(data.markings)) {
+                    data.markings.forEach(m => {
+                        const dType = (m.disaster_type || 'floods').toLowerCase();
+                        const dMeta = DISASTER_META[dType] || { name: 'Hazard', icon: '⚠️' };
+                        const hex = HEX_MAP[m.color] || HEX_MAP[m.risk_level] || '#16a34a';
+                        const geo = m.geojson_data;
+                        let item = null;
+
+                        if (m.shape_type === 'circle' && geo.center && geo.radius) {
+                            item = L.circle(geo.center, { radius: geo.radius, color: hex, fillColor: hex, fillOpacity: 0.35, weight: 2 });
+                        } else if (m.shape_type === 'marker' && geo) {
+                            const latlng = geo.center || (geo.coordinates ? [geo.coordinates[1], geo.coordinates[0]] : null);
+                            if (latlng) {
+                                item = L.circleMarker(latlng, { radius: 8, fillColor: hex, color: '#ffffff', weight: 2, fillOpacity: 0.85 });
+                            }
+                        } else if (geo && (geo.type || geo.coordinates)) {
+                            item = L.geoJSON(geo, { style: { color: hex, fillColor: hex, fillOpacity: 0.35, weight: 2 } });
+                        }
+
+                        if (item) {
+                            item.bindPopup(`<b>${dMeta.icon} ${m.title}</b><br/><span style="color:${hex};font-weight:bold;">${(m.risk_level||'safe').toUpperCase()} RISK</span>${m.description ? `<br/><small>${m.description}</small>` : ''}`);
+                            item.addTo(map);
+                        }
+                    });
+                }
+            })
+            .catch(err => console.warn('Could not load hazard overlays:', err));
+    }
+
+    /* ---------------- Photo & Camera Attachment Handler ---------------- */
+    const cameraInput = document.getElementById('issue-camera-input');
+    const galleryInput = document.getElementById('issue-gallery-input');
+    const photoBase64Input = document.getElementById('issue-photo-base64');
+    const dropzone = document.getElementById('photo-dropzone');
+    const previewCard = document.getElementById('photo-preview-card');
+    const previewImg = document.getElementById('photo-preview-img');
+    const previewFilename = document.getElementById('preview-filename');
+    const previewFilesize = document.getElementById('preview-filesize');
+    const previewBadge = document.getElementById('preview-source-badge');
+    const btnRemovePhoto = document.getElementById('btn-remove-photo');
+    const btnRetakePhoto = document.getElementById('btn-retake-photo');
+    const btnBrowsePhotos = document.getElementById('btn-browse-photos');
+    const btnCamera = document.getElementById('btn-camera');
+
+    // Camera Modal Elements
+    const cameraModal = document.getElementById('camera-modal');
+    const cameraBackdrop = document.getElementById('camera-backdrop');
+    const cameraCloseBtn = document.getElementById('camera-close-btn');
+    const cameraVideo = document.getElementById('camera-video');
+    const cameraCanvas = document.getElementById('camera-canvas');
+    const btnSnapPhoto = document.getElementById('btn-snap-photo');
+    const btnSwitchCamera = document.getElementById('btn-switch-camera');
+    const btnCancelCam = document.getElementById('btn-cancel-cam');
+    const cameraDeviceSelect = document.getElementById('camera-device-select');
+    const cameraLoadingState = document.getElementById('camera-loading-state');
+    const cameraErrorState = document.getElementById('camera-error-state');
+    const camErrorTitle = document.getElementById('cam-error-title');
+    const camErrorMsg = document.getElementById('cam-error-msg');
+    const btnRetryCamera = document.getElementById('btn-retry-camera');
+    const btnFallbackBrowse = document.getElementById('btn-fallback-browse');
+    const camGuideBox = document.getElementById('cam-guide-box');
+
+    let currentStream = null;
+    let availableVideoDevices = [];
+    let currentDeviceIndex = 0;
+    let activeFacingMode = 'user'; // Laptop/Desktop default: user webcam
+
+    function isMobileDevice() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+               (window.matchMedia && window.matchMedia('(max-width: 768px)').matches && 'ontouchstart' in window);
+    }
+
+    function formatBytes(bytes) {
+        if (!bytes || bytes === 0) return '0 KB';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+
+    function showPhotoPreview(src, filename, sizeText, isCamera) {
+        if (previewImg) previewImg.src = src;
+        if (previewFilename) previewFilename.textContent = filename || 'attached_photo.jpg';
+        if (previewFilesize) previewFilesize.textContent = sizeText ? `(${sizeText})` : '';
+        if (previewBadge) {
+            previewBadge.innerHTML = isCamera ? '<i class="fas fa-camera"></i> Live Camera Photo' : '<i class="fas fa-image"></i> Gallery Photo';
+            previewBadge.style.background = isCamera ? '#fff3e0' : '#e8f5e9';
+            previewBadge.style.color = isCamera ? '#e65100' : '#2e7d32';
+            previewBadge.style.borderColor = isCamera ? '#ffe0b2' : '#c8e6c9';
+        }
+        if (dropzone) dropzone.style.display = 'none';
+        if (previewCard) previewCard.style.display = 'flex';
+    }
+
+    function removePhoto() {
+        if (cameraInput) cameraInput.value = '';
+        if (galleryInput) galleryInput.value = '';
+        if (photoBase64Input) photoBase64Input.value = '';
+        if (previewImg) previewImg.src = '';
+        if (previewCard) previewCard.style.display = 'none';
+        if (dropzone) dropzone.style.display = 'block';
+    }
+
+    if (btnRemovePhoto) btnRemovePhoto.addEventListener('click', removePhoto);
+    if (btnRetakePhoto) btnRetakePhoto.addEventListener('click', function() {
+        if (btnCamera) btnCamera.click();
+    });
+
+    function handleFile(file, isCamera) {
+        if (!file || !file.type.startsWith('image/')) {
+            alert('Please select a valid image file (JPG, PNG, WEBP, etc.)');
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            if (photoBase64Input) photoBase64Input.value = '';
+            showPhotoPreview(e.target.result, file.name, formatBytes(file.size), isCamera);
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function stopCameraStream() {
+        if (currentStream) {
+            currentStream.getTracks().forEach(track => {
+                try { track.stop(); } catch(e) {}
+            });
+            currentStream = null;
+        }
+        if (cameraVideo) {
+            cameraVideo.srcObject = null;
+            cameraVideo.classList.remove('cam-mirror');
+        }
+        if (cameraModal) cameraModal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+
+    function showCameraLoading() {
+        if (cameraLoadingState) cameraLoadingState.style.display = 'flex';
+        if (cameraErrorState) cameraErrorState.style.display = 'none';
+        if (camGuideBox) camGuideBox.style.display = 'none';
+    }
+
+    function showCameraReady() {
+        if (cameraLoadingState) cameraLoadingState.style.display = 'none';
+        if (cameraErrorState) cameraErrorState.style.display = 'none';
+        if (camGuideBox) camGuideBox.style.display = 'flex';
+    }
+
+    function showCameraError(err) {
+        console.error('Camera access error:', err);
+        if (cameraLoadingState) cameraLoadingState.style.display = 'none';
+        if (camGuideBox) camGuideBox.style.display = 'none';
+        if (cameraErrorState) {
+            cameraErrorState.style.display = 'flex';
+            let title = 'Camera Access';
+            let message = 'Unable to access your webcam or camera stream.';
+
+            const switchLocalhostBtn = document.getElementById('btn-switch-localhost');
+            if (switchLocalhostBtn) {
+                if (window.location.hostname !== 'localhost' && window.location.protocol !== 'https:') {
+                    switchLocalhostBtn.style.display = 'inline-flex';
+                } else {
+                    switchLocalhostBtn.style.display = 'none';
+                }
             }
 
-            navigator.geolocation.getCurrentPosition(
-                function(position) {
-                    const current = L.latLng(position.coords.latitude, position.coords.longitude);
-                    setPageLocation(current);
-                    map.setView(current, 16);
-                },
-                function() {
-                    if (coordsLabel) {
-                        coordsLabel.textContent = '📍 GPS permission denied. Please click on the map to set location.';
-                        coordsLabel.style.background = '#ffebee';
-                        coordsLabel.style.color = '#d32f2f';
-                    }
-                },
-                { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-            );
+            if (err && (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError')) {
+                title = 'Permission Required';
+                message = 'Camera permission was blocked. Tap "Open Device Camera" below or allow camera in your browser address bar.';
+            } else if (err && (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError')) {
+                title = 'No Webcam Stream';
+                message = 'Live webcam was not found. Tap "Open Device Camera" below to take a photo directly with your device camera.';
+            } else if (err && (err.name === 'NotReadableError' || err.name === 'TrackStartError')) {
+                title = 'Webcam In Use';
+                message = 'Webcam is in use by another app. Close other camera apps and click "Try Again", or tap "Open Device Camera".';
+            } else if (window.isSecureContext === false || (err && (err.name === 'TypeError' || err.message.includes('insecure')))) {
+                title = 'Live Stream Notice';
+                message = 'Live video requires http://localhost:5000 or HTTPS. You can tap "Open Device Camera" to take a photo instantly or open on localhost.';
+            } else {
+                message = (err && err.message) ? err.message : 'Could not start webcam stream. Tap "Open Device Camera" to take photo.';
+            }
+
+            if (camErrorTitle) camErrorTitle.textContent = title;
+            if (camErrorMsg) camErrorMsg.textContent = message;
+        }
+    }
+
+    async function enumerateCameraDevices() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+        try {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            availableVideoDevices = devices.filter(d => d.kind === 'videoinput');
+            if (cameraDeviceSelect) {
+                cameraDeviceSelect.innerHTML = '';
+                if (availableVideoDevices.length > 1) {
+                    availableVideoDevices.forEach((dev, index) => {
+                        const opt = document.createElement('option');
+                        opt.value = dev.deviceId;
+                        opt.textContent = dev.label || `Camera ${index + 1}`;
+                        cameraDeviceSelect.appendChild(opt);
+                    });
+                    cameraDeviceSelect.style.display = 'inline-block';
+                } else {
+                    cameraDeviceSelect.style.display = 'none';
+                }
+            }
+        } catch(e) {
+            console.warn('Could not enumerate devices:', e);
+        }
+    }
+
+    async function requestCameraStream(targetDeviceId, targetFacing) {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            throw new Error('Webcam WebRTC is not supported in this browser context.');
+        }
+
+        if (currentStream) {
+            currentStream.getTracks().forEach(t => {
+                try { t.stop(); } catch(e) {}
+            });
+            currentStream = null;
+        }
+
+        const attempts = [];
+
+        // 1. Explicit device ID if provided
+        if (targetDeviceId) {
+            attempts.push({ video: { deviceId: { exact: targetDeviceId } }, audio: false });
+            attempts.push({ video: { deviceId: targetDeviceId }, audio: false });
+        }
+
+        // 2. Direct simple video constraint for 100% desktop & laptop webcam compatibility
+        attempts.push({ video: true, audio: false });
+
+        // 3. Facing mode if specified
+        if (targetFacing) {
+            attempts.push({ video: { facingMode: { ideal: targetFacing } }, audio: false });
+        }
+
+        let lastErr = null;
+        for (const constraints of attempts) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                return { stream, constraints };
+            } catch (err) {
+                lastErr = err;
+                if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                    throw err;
+                }
+            }
+        }
+        throw lastErr || new Error('Failed to connect to webcam');
+    }
+
+    async function startCameraStream(deviceId = null, facing = null) {
+        if (!cameraModal) return;
+        cameraModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        showCameraLoading();
+
+        if (!facing) {
+            facing = isMobileDevice() ? 'environment' : 'user';
+        }
+        activeFacingMode = facing;
+
+        try {
+            const { stream } = await requestCameraStream(deviceId, facing);
+            currentStream = stream;
+            if (cameraVideo) {
+                cameraVideo.srcObject = stream;
+                if (facing === 'user' || (!isMobileDevice() && !deviceId)) {
+                    cameraVideo.classList.add('cam-mirror');
+                } else {
+                    cameraVideo.classList.remove('cam-mirror');
+                }
+
+                try {
+                    await cameraVideo.play();
+                } catch(playErr) {
+                    console.warn('Video play autoplay notice:', playErr);
+                }
+            }
+
+            showCameraReady();
+            await enumerateCameraDevices();
+
+            if (cameraDeviceSelect && deviceId) {
+                cameraDeviceSelect.value = deviceId;
+            }
+        } catch (err) {
+            showCameraError(err);
+        }
+    }
+
+    if (btnCamera) {
+        btnCamera.addEventListener('click', function(e) {
+            e.preventDefault();
+            startCameraStream(null, 'user');
+        });
+    }
+
+    const btnOpenDeviceCam = document.getElementById('btn-open-device-cam');
+    if (btnOpenDeviceCam && cameraInput) {
+        btnOpenDeviceCam.addEventListener('click', function() {
+            stopCameraStream();
+            cameraInput.click();
+        });
+    }
+
+    const btnSwitchLocalhost = document.getElementById('btn-switch-localhost');
+    if (btnSwitchLocalhost) {
+        btnSwitchLocalhost.addEventListener('click', function() {
+            const port = window.location.port ? `:${window.location.port}` : '';
+            window.location.href = `http://localhost${port}${window.location.pathname}${window.location.search}`;
+        });
+    }
+
+    if (btnBrowsePhotos && galleryInput) {
+        btnBrowsePhotos.addEventListener('click', function(e) {
+            e.preventDefault();
+            galleryInput.click();
+        });
+    }
+
+    if (btnRetryCamera) {
+        btnRetryCamera.addEventListener('click', function() {
+            startCameraStream(null, activeFacingMode);
+        });
+    }
+
+    if (btnFallbackBrowse && galleryInput) {
+        btnFallbackBrowse.addEventListener('click', function() {
+            stopCameraStream();
+            galleryInput.click();
+        });
+    }
+
+    if (cameraDeviceSelect) {
+        cameraDeviceSelect.addEventListener('change', function() {
+            const selectedId = this.value;
+            if (selectedId) {
+                startCameraStream(selectedId, null);
+            }
+        });
+    }
+
+    if (btnSwitchCamera) {
+        btnSwitchCamera.addEventListener('click', function() {
+            if (availableVideoDevices.length > 1) {
+                currentDeviceIndex = (currentDeviceIndex + 1) % availableVideoDevices.length;
+                const nextDev = availableVideoDevices[currentDeviceIndex];
+                startCameraStream(nextDev.deviceId, null);
+            } else {
+                activeFacingMode = (activeFacingMode === 'environment') ? 'user' : 'environment';
+                startCameraStream(null, activeFacingMode);
+            }
+        });
+    }
+
+    // File input change listeners
+    if (cameraInput) {
+        cameraInput.addEventListener('change', function() {
+            if (this.files && this.files.length > 0) {
+                handleFile(this.files[0], true);
+            }
+        });
+    }
+
+    if (galleryInput) {
+        galleryInput.addEventListener('change', function() {
+            if (this.files && this.files.length > 0) {
+                try {
+                    const dt = new DataTransfer();
+                    dt.items.add(this.files[0]);
+                    cameraInput.files = dt.files;
+                } catch(err) {}
+                handleFile(this.files[0], false);
+            }
+        });
+    }
+
+    // Dropzone Click & Drag/Drop
+    if (dropzone) {
+        dropzone.addEventListener('click', function() {
+            if (btnCamera) btnCamera.click();
+        });
+        dropzone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            dropzone.classList.add('dragover');
+        });
+        dropzone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            dropzone.classList.remove('dragover');
+        });
+        dropzone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            dropzone.classList.remove('dragover');
+            if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                const file = e.dataTransfer.files[0];
+                try {
+                    const dt = new DataTransfer();
+                    dt.items.add(file);
+                    cameraInput.files = dt.files;
+                } catch(err) {}
+                handleFile(file, false);
+            }
+        });
+    }
+
+    if (cameraCloseBtn) cameraCloseBtn.addEventListener('click', stopCameraStream);
+    if (cameraBackdrop) cameraBackdrop.addEventListener('click', stopCameraStream);
+    if (btnCancelCam) btnCancelCam.addEventListener('click', stopCameraStream);
+
+    if (btnSnapPhoto && cameraVideo && cameraCanvas) {
+        btnSnapPhoto.addEventListener('click', function() {
+            if (!cameraVideo.videoWidth || !cameraVideo.videoHeight) {
+                alert('Please wait for the camera video feed to load.');
+                return;
+            }
+            cameraCanvas.width = cameraVideo.videoWidth;
+            cameraCanvas.height = cameraVideo.videoHeight;
+            const ctx = cameraCanvas.getContext('2d');
+            ctx.drawImage(cameraVideo, 0, 0, cameraCanvas.width, cameraCanvas.height);
+            const dataUrl = cameraCanvas.toDataURL('image/jpeg', 0.92);
+
+            if (photoBase64Input) photoBase64Input.value = dataUrl;
+            if (cameraInput) cameraInput.value = '';
+
+            const estimatedSize = Math.round((dataUrl.length * 3) / 4);
+            const timestamp = new Date().toISOString().replace(/[-:T.]/g, '').slice(0, 14);
+            const snapFilename = `camera_${timestamp}.jpg`;
+
+            showPhotoPreview(dataUrl, snapFilename, formatBytes(estimatedSize), true);
+            stopCameraStream();
         });
     }
 });

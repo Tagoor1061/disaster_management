@@ -6,10 +6,17 @@
 
 {% block content %}
 <nav class="main-navbar">
-    <img src="{{ url_for('static', filename='img/final_logo.png') }}" alt="Guntur Logo" class="logo" onerror="this.style.display='none'">
-    <span class="main-title">Suraksha Kavach
-        <div class="main-subtitle">DEPARTMENT OF GOVERNMENT MUNICIPAL CORPORATION </div>
-    </span>
+    <a href="{{ url_for('main.home') }}" class="main-navbar-brand">
+        <img src="{{ url_for('static', filename='img/final_logo.png') }}" alt="Guntur Logo" class="logo" onerror="this.style.display='none'">
+        <span class="main-title">Suraksha Kavach
+            <div class="main-subtitle">DEPARTMENT OF GOVERNMENT MUNICIPAL CORPORATION</div>
+        </span>
+    </a>
+    <div class="main-navbar-actions">
+        <button type="button" class="mobile-nav-toggle-btn" id="mobile-nav-toggle" aria-label="Open Navigation Menu">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
 </nav>
 
 <nav class="secondary-navbar">
@@ -76,20 +83,47 @@
 
     <!-- ================= VIDEO LIBRARY ================= -->
     <h2 class="section-title"><i class="fas fa-photo-video" style="color:#5d4037;"></i> Educational Video Library</h2>
-    <p class="section-sub">Tap any card to watch a curated safety video on that topic (opens in a player below).</p>
+    <p class="section-sub">Watch curated disaster preparedness and safety videos in the responsive 2×2 grid below:</p>
 
-    <div class="video-grid" id="video-grid"><!-- cards injected by JS --></div>
+    <div class="video-grid">
+        <div class="video-card-embed">
+            <div class="video-responsive-wrap">
+                <iframe src="https://www.youtube.com/embed/P_XgN1hheNw" title="Disaster Preparedness & Response Guide" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+            </div>
+            <div class="video-card-title">
+                <i class="fas fa-play-circle text-orange"></i>
+                <span>Disaster Preparedness & Response Guide</span>
+            </div>
+        </div>
 
-    <!-- Video player modal -->
-    <div id="video-modal" class="sk-modal" hidden>
-        <div class="sk-modal-backdrop" data-close></div>
-        <div class="sk-modal-card" role="dialog" aria-modal="true">
-            <button class="sk-modal-close" data-close aria-label="Close">&times;</button>
-            <div class="sk-modal-frame"><iframe id="video-frame" src="" title="Disaster safety video"
-                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                 allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
-            <p class="sk-modal-note"><i class="fas fa-info-circle"></i>
-               Playing top community result from YouTube for this topic. Always follow official NDMA/SDMA guidance.</p>
+        <div class="video-card-embed">
+            <div class="video-responsive-wrap">
+                <iframe src="https://www.youtube.com/embed/iCU1NEO99q4" title="Emergency Safety Essential Tips" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+            </div>
+            <div class="video-card-title">
+                <i class="fas fa-bolt text-blue"></i>
+                <span>Emergency Safety Essential Tips</span>
+            </div>
+        </div>
+
+        <div class="video-card-embed">
+            <div class="video-responsive-wrap">
+                <iframe src="https://www.youtube.com/embed/z86j8eAd38Q" title="Quick Action Disaster Safety Guidelines" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+            </div>
+            <div class="video-card-title">
+                <i class="fas fa-shield-alt text-green"></i>
+                <span>Quick Action Disaster Safety Guidelines</span>
+            </div>
+        </div>
+
+        <div class="video-card-embed">
+            <div class="video-responsive-wrap">
+                <iframe src="https://www.youtube.com/embed/DQmJ_RX1xsk" title="Critical Hazard Awareness & Action" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+            </div>
+            <div class="video-card-title">
+                <i class="fas fa-life-ring text-red"></i>
+                <span>Critical Hazard Awareness & Action</span>
+            </div>
         </div>
     </div>
 
@@ -157,12 +191,13 @@
 
 <style>
 .learn-container {
-    max-width: 1100px;
+    max-width: 1560px;
+    width: 97%;
     margin: 2rem auto;
-    padding: 2rem;
-    background: rgba(255,255,255,0.96);
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    padding: 2.2rem;
+    background: rgba(255,255,255,0.98);
+    border-radius: 18px;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.12);
 }
 
 .hero-learn { background: linear-gradient(135deg, #0d47a1 0%, #1976d2 100%); }
@@ -178,86 +213,64 @@
 
 .section-sub { color: #66788a; margin: 0 0 1.4rem; font-size: 0.98rem; }
 
-/* ---------- Video grid ---------- */
+/* ---------- 2x2 Responsive Video Grid ---------- */
 .video-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.4rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 2rem;
 }
 
-.video-card {
-    cursor: pointer;
-    transition: transform .25s ease, box-shadow .25s ease;
+@media (max-width: 768px) {
+    .video-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
-.video-thumb {
-    position: relative;
-    height: 170px;
-    border-radius: 10px;
+.video-card-embed {
+    background: #ffffff;
+    border-radius: 12px;
     overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e0e6ed;
+    transition: transform .25s ease, box-shadow .25s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.video-card-embed:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+}
+
+.video-responsive-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+}
+
+.video-responsive-wrap iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+
+.video-card-title {
+    padding: 0.85rem 1.1rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #2c3e50;
     display: flex;
     align-items: center;
-    justify-content: center;
-    margin-bottom: 0.9rem;
+    gap: 0.6rem;
+    background: #f8fafc;
+    border-top: 1px solid #edf2f7;
 }
-
-.video-thumb .vt-icon {
-    width: 64px; height: 64px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.92);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.7rem;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-    transition: transform .25s ease;
-}
-
-.video-card:hover .vt-icon { transform: scale(1.12); }
-
-.video-thumb .vt-play {
-    position: absolute;
-    bottom: 10px; right: 12px;
-    background: rgba(0,0,0,0.65);
-    color: #fff;
-    padding: 0.25rem 0.65rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 700;
-}
-
-.video-meta h3 { margin: 0 0 0.3rem; color: #22303c; font-size: 1.08rem; }
-.video-meta p { margin: 0; color: #5d6d7a; font-size: 0.88rem; line-height: 1.55; }
-
-/* ---------- Modal ---------- */
-.sk-modal { position: fixed; inset: 0; z-index: 2000; }
-.sk-modal[hidden] { display: none; }
-.sk-modal-backdrop {
-    position: absolute; inset: 0;
-    background: rgba(8, 20, 14, 0.78);
-    -webkit-backdrop-filter: blur(4px);
-    backdrop-filter: blur(4px);
-}
-.sk-modal-card {
-    position: relative;
-    max-width: 900px;
-    margin: 4vh auto;
-    background: #fff;
-    border-radius: 16px;
-    padding: 1rem;
-    box-shadow: 0 24px 70px rgba(0,0,0,0.45);
-}
-.sk-modal-close {
-    position: absolute; top: -14px; right: -14px;
-    width: 38px; height: 38px;
-    border-radius: 50%;
-    border: none;
-    background: #d32f2f; color: #fff;
-    font-size: 1.3rem; line-height: 1;
-    cursor: pointer;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.3);
-}
-.sk-modal-frame { position: relative; padding-top: 56.25%; border-radius: 10px; overflow: hidden; background: #000; }
-.sk-modal-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-.sk-modal-note { margin: 0.7rem 0.2rem 0.2rem; color: #66788a; font-size: 0.82rem; }
 
 /* ---------- Quiz ---------- */
 .quiz-shell { padding: 1.6rem 1.8rem; }
@@ -382,71 +395,6 @@
    ============================================================ */
 (function () {
     'use strict';
-
-    /* ---------------- Video library ---------------- */
-    var VIDEOS = [
-        { emoji: '🌀', name: 'Cyclone Preparedness',
-          desc: 'How cyclone warnings work, when to evacuate, and how to protect your home before landfall.',
-          query: 'cyclone preparedness safety tips India',
-          grad: 'linear-gradient(135deg,#e65100,#ffb74d)' },
-        { emoji: '🌊', name: 'Flood Safety Essentials',
-          desc: 'Never walk or drive through floodwater — learn depth dangers, sandbagging and evacuation basics.',
-          query: 'flood safety tips what to do',
-          grad: 'linear-gradient(135deg,#1565c0,#64b5f6)' },
-        { emoji: '🏚️', name: 'Earthquake Drill: Drop, Cover, Hold',
-          desc: 'The life-saving three-step drill everyone must practise — at home, school and office.',
-          query: 'drop cover hold earthquake drill',
-          grad: 'linear-gradient(135deg,#6a1b9a,#ba68c8)' },
-        { emoji: '⛰️', name: 'Landslide Awareness',
-          desc: 'Spot early warning signs like slope cracks and tilting trees, and learn safe evacuation paths.',
-          query: 'landslide warning signs safety',
-          grad: 'linear-gradient(135deg,#4e342e,#a1887f)' },
-        { emoji: '🌊', name: 'Tsunami Warning Signs',
-          desc: 'Strong shaking, roaring sea, sudden recession — recognise nature’s tsunami alarm instantly.',
-          query: 'tsunami warning signs evacuation',
-          grad: 'linear-gradient(135deg,#00838f,#4dd0e1)' },
-        { emoji: '🎒', name: 'Build Your Emergency Kit',
-          desc: 'Water, food, torch, radio, medicines — pack a 72-hour grab-bag your family can rely on.',
-          query: 'emergency kit disaster preparedness 72 hours',
-          grad: 'linear-gradient(135deg,#2e7d32,#81c784)' }
-    ];
-
-    var grid = document.getElementById('video-grid');
-    var modal = document.getElementById('video-modal');
-    var frame = document.getElementById('video-frame');
-
-    VIDEOS.forEach(function (v) {
-        var card = document.createElement('div');
-        card.className = 'video-card info-card';
-        card.innerHTML =
-            '<div class="video-thumb" style="background:' + v.grad + ';">' +
-              '<div class="vt-icon">' + v.emoji + '</div>' +
-              '<span class="vt-play"><i class="fas fa-play"></i> WATCH</span>' +
-            '</div>' +
-            '<div class="video-meta"><h3>' + v.name + '</h3><p>' + v.desc + '</p></div>';
-        card.addEventListener('click', function () { openVideo(v); });
-        grid.appendChild(card);
-    });
-
-    function openVideo(v) {
-        frame.src = 'https://www.youtube-nocookie.com/embed?listType=search&list=' +
-                    encodeURIComponent(v.query) + '&rel=0';
-        modal.hidden = false;
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeVideo() {
-        modal.hidden = true;
-        frame.src = '';
-        document.body.style.overflow = '';
-    }
-
-    modal.addEventListener('click', function (e) {
-        if (e.target.hasAttribute('data-close')) closeVideo();
-    });
-    document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && !modal.hidden) closeVideo();
-    });
 
     /* ---------------- Quiz bank ---------------- */
     var BANK = [

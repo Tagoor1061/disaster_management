@@ -69,8 +69,22 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     login_manager.init_app(app)
 
-    # Register blueprints
+    # Automatic SQLite schema migration for zone_marking columns
+    with app.app_context():
+        try:
+            from sqlalchemy import inspect, text
+            inspector = inspect(db.engine)
+            if 'zone_marking' in inspector.get_table_names():
+                existing_cols = [c['name'] for c in inspector.get_columns('zone_marking')]
+                with db.engine.begin() as conn:
+                    if 'disaster_type' not in existing_cols:
+                        conn.execute(text("ALTER TABLE zone_marking ADD COLUMN disaster_type VARCHAR(50) DEFAULT 'floods'"))
+                    if 'description' not in existing_cols:
+                        conn.execute(text("ALTER TABLE zone_marking ADD COLUMN description TEXT DEFAULT ''"))
+        except Exception as mig_err:
+            app.logger.warning('ZoneMarking schema check note: %s', mig_err)
 
+    # Register blueprints
     from app.routes.main import bp as main_bp
     from app.routes.auth import bp as auth_bp
     from app.routes.services import bp as services_bp
@@ -84,6 +98,7 @@ def create_app(config_class=Config):
     from app.routes.wind_api import bp as wind_api_bp
     from app.routes.flood_api import bp as flood_api_bp
     from app.routes.landslide_api import bp as landslide_api_bp
+    from app.routes.cyclone_api import bp as cyclone_api_bp, mosdac_asset_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
@@ -98,6 +113,8 @@ def create_app(config_class=Config):
     app.register_blueprint(wind_api_bp)
     app.register_blueprint(flood_api_bp)
     app.register_blueprint(landslide_api_bp)
+    app.register_blueprint(cyclone_api_bp)
+    app.register_blueprint(mosdac_asset_bp)
 
     @app.context_processor
     def inject_public_config():
@@ -197,7 +214,23 @@ def create_app(config_class=Config):
             except Exception as exc:
                 app.logger.warning('Landslide ML retraining job failed: %s', exc)
 
+    def refresh_cyclone_job():
+        """5-minute real-time IMD cyclone track, wind warnings & COU sync."""
+        with app.app_context():
+            try:
+                from app.utils.cyclone_data import CycloneDataManager
+                CycloneDataManager.fetch_all_cyclone_data(force=True)
+            except Exception as exc:
+                app.logger.warning('Cyclone IMD live refresh job failed: %s', exc)
+
     scheduler = BackgroundScheduler()
+    scheduler.add_job(
+        func=refresh_cyclone_job,
+        trigger=IntervalTrigger(minutes=5),  # Check official IMD cyclone track/wind every 5 mins
+        id='cyclone_live_refresh',
+        name='5-Minute IMD Cyclone Real-Time Refresh',
+        replace_existing=True
+    )
     scheduler.add_job(
         func=fetch_weather_summary,
         trigger=IntervalTrigger(hours=1),  # Check every hour

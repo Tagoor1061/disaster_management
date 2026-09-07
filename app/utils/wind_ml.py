@@ -341,6 +341,13 @@ def predict_wind(include_explanations=True):
                      "speeds) drove the hazard classification; LIME explains the "
                      "latest individual prediction."),
         },
+        "daily": __import__('app.utils.disaster_analytics', fromlist=['DisasterAnalyticsManager']).DisasterAnalyticsManager._generate_daily_series('winds'),
+        "monthly": __import__('app.utils.disaster_analytics', fromlist=['DisasterAnalyticsManager']).DisasterAnalyticsManager._generate_monthly_series('winds'),
+        "yearly": __import__('app.utils.disaster_analytics', fromlist=['DisasterAnalyticsManager']).DisasterAnalyticsManager._generate_yearly_series(
+            'winds',
+            __import__('app.utils.disaster_analytics', fromlist=['DisasterAnalyticsManager']).DisasterAnalyticsManager.load_data().get('winds', {}),
+            __import__('pickle').load(open(os.path.join(MODEL_DIR, "winds_model.pkl"), "rb")) if os.path.exists(os.path.join(MODEL_DIR, "winds_model.pkl")) else clf
+        ),
     }
 
 

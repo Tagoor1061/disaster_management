@@ -5,10 +5,16 @@ from sqlalchemy import inspect, text
 def ensure_schema_updated():
     try:
         inspector = inspect(db.engine)
-        columns = [c['name'] for c in inspector.get_columns('user')]
-        if 'phone' not in columns:
-            db.session.execute(text('ALTER TABLE user ADD COLUMN phone VARCHAR(20)'))
-            db.session.commit()
+        if 'user' in inspector.get_table_names():
+            columns = [c['name'] for c in inspector.get_columns('user')]
+            if 'phone' not in columns:
+                db.session.execute(text('ALTER TABLE user ADD COLUMN phone VARCHAR(20)'))
+                db.session.commit()
+        if 'issue' in inspector.get_table_names():
+            issue_cols = [c['name'] for c in inspector.get_columns('issue')]
+            if 'image_url' not in issue_cols:
+                db.session.execute(text('ALTER TABLE issue ADD COLUMN image_url VARCHAR(300)'))
+                db.session.commit()
     except Exception as exc:
         db.session.rollback()
 

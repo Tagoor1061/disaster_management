@@ -1,0 +1,543 @@
+/* ==========================================================================
+   Suraksha Kavach — Universal Location Risk & Hazard Assessment Widget Styles
+   ========================================================================== */
+
+.location-risk-widget {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+    padding: 1.8rem;
+    margin: 2rem 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1e293b;
+    position: relative;
+    overflow: hidden;
+}
+
+.location-risk-widget * {
+    box-sizing: border-box;
+}
+
+/* Header & Banner */
+.lr-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.4rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.lr-title-group h3 {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.lr-title-group p {
+    margin: 0.3rem 0 0 0;
+    color: #64748b;
+    font-size: 0.92rem;
+}
+
+.lr-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+/* Search Bar & Quick Chips */
+.lr-search-section {
+    margin-bottom: 1.5rem;
+}
+
+.lr-search-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: #f8fafc;
+    border: 2px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 0.3rem 0.8rem;
+    transition: all 0.2s ease;
+}
+
+.lr-search-input-wrap:focus-within {
+    border-color: #e65100;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(230, 81, 0, 0.12);
+}
+
+.lr-search-icon {
+    color: #94a3b8;
+    font-size: 1.15rem;
+    margin-right: 0.6rem;
+}
+
+.lr-search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #0f172a;
+    padding: 0.6rem 0;
+}
+
+.lr-search-input::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+.lr-gps-btn {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    padding: 0.5rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: all 0.2s;
+    margin-left: 0.4rem;
+}
+
+.lr-gps-btn:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+.lr-search-results-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e2e8f0;
+    z-index: 2000;
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+.lr-search-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    transition: background 0.15s;
+}
+
+.lr-search-item:last-child {
+    border-bottom: none;
+}
+
+.lr-search-item:hover, .lr-search-item.selected {
+    background: #f8fafc;
+}
+
+.lr-item-name {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 0.95rem;
+}
+
+.lr-item-sub {
+    font-size: 0.82rem;
+    color: #64748b;
+    margin-top: 2px;
+}
+
+/* Quick Location Pills */
+.lr-quick-pills {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.8rem;
+    align-items: center;
+}
+
+.lr-pill-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-right: 0.2rem;
+}
+
+.lr-pill-btn {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #334155;
+    cursor: pointer;
+    transition: all 0.18s;
+}
+
+.lr-pill-btn:hover {
+    background: #e65100;
+    color: #ffffff;
+    border-color: #e65100;
+    transform: translateY(-1px);
+}
+
+/* 2-Column Dashboard Body */
+.lr-body-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.6rem;
+    margin-bottom: 1.6rem;
+}
+
+@media (max-width: 960px) {
+    .lr-body-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Left Panel: Gauge & Metrics */
+.lr-gauge-card {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    padding: 1.6rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.lr-location-title-wrap {
+    margin-bottom: 1.2rem;
+}
+
+.lr-loc-name {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.lr-loc-coords {
+    font-size: 0.86rem;
+    color: #64748b;
+    margin-top: 3px;
+}
+
+/* Gauge Visual */
+.lr-gauge-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin: 1rem 0 1.5rem 0;
+    flex-wrap: wrap;
+}
+
+.lr-svg-gauge-wrap {
+    position: relative;
+    width: 140px;
+    height: 140px;
+}
+
+.lr-svg-gauge {
+    transform: rotate(-90deg);
+    width: 140px;
+    height: 140px;
+}
+
+.lr-gauge-bg-circle {
+    fill: none;
+    stroke: #e2e8f0;
+    stroke-width: 12;
+}
+
+.lr-gauge-fill-circle {
+    fill: none;
+    stroke: #e65100;
+    stroke-width: 12;
+    stroke-linecap: round;
+    stroke-dasharray: 377;
+    stroke-dashoffset: 377;
+    transition: stroke-dashoffset 1s ease-out, stroke 0.3s ease;
+}
+
+.lr-gauge-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.lr-gauge-num {
+    font-size: 2.1rem;
+    font-weight: 900;
+    color: #0f172a;
+    line-height: 1;
+}
+
+.lr-gauge-sub {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+.lr-tier-badge {
+    padding: 0.5rem 1.2rem;
+    border-radius: 24px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #ffffff;
+    background: #e65100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    display: inline-block;
+}
+
+/* Rate Metrics Grid */
+.lr-rates-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+}
+
+.lr-rate-box {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 0.9rem;
+    border: 1px solid #e2e8f0;
+}
+
+.lr-rate-label {
+    font-size: 0.78rem;
+    color: #64748b;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.lr-rate-val {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-top: 3px;
+}
+
+.lr-rate-sub {
+    font-size: 0.78rem;
+    color: #059669;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+/* Right Panel: Interactive Mini Map */
+.lr-map-card {
+    position: relative;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 2px solid #e2e8f0;
+    min-height: 380px;
+    background: #e2e8f0;
+}
+
+.lr-interactive-map {
+    width: 100%;
+    height: 100%;
+    min-height: 380px;
+}
+
+.lr-map-hint {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(6px);
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    z-index: 1000;
+    pointer-events: none;
+    text-align: center;
+}
+
+/* Bottom Intelligence Accordion & Cards */
+.lr-details-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.4rem;
+}
+
+.lr-info-card {
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    padding: 1.2rem 1.4rem;
+}
+
+.lr-info-card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.lr-indicators-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.7rem;
+    font-size: 0.88rem;
+}
+
+.lr-indicator-item {
+    background: #ffffff;
+    padding: 0.6rem 0.8rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.lr-ind-name {
+    font-size: 0.78rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.lr-ind-val {
+    font-weight: 700;
+    color: #0f172a;
+    margin-top: 2px;
+}
+
+.lr-ind-status {
+    font-size: 0.74rem;
+    color: #e65100;
+    font-weight: 600;
+}
+
+/* Directives & Direct Call */
+.lr-action-list {
+    margin: 0;
+    padding-left: 1.2rem;
+    font-size: 0.9rem;
+    color: #334155;
+    line-height: 1.5;
+}
+
+.lr-action-list li {
+    margin-bottom: 0.4rem;
+}
+
+.lr-contacts-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.8rem;
+}
+
+.lr-contact-pill {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.88rem;
+}
+
+.lr-contact-pill a {
+    color: #0284c7;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+/* Multi-Hazard Breakdown Bars */
+.lr-breakdown-card {
+    grid-column: 1 / -1;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    padding: 1.2rem 1.4rem;
+}
+
+.lr-bars-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 0.8rem;
+    margin-top: 0.8rem;
+}
+
+.lr-bar-item {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.8rem;
+    text-align: center;
+}
+
+.lr-bar-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+}
+
+.lr-bar-track {
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 0.4rem 0;
+}
+
+.lr-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.8s ease-out;
+}
+
+.lr-bar-pct {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: #0f172a;
+}

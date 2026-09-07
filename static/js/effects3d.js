@@ -33,6 +33,7 @@
             el.dataset.fxTiltBound = '1';
             el.classList.add('fx-tilt');
             el.addEventListener('pointermove', function (e) {
+                if (e.pointerType === 'touch') return;
                 var r = el.getBoundingClientRect();
                 var px = (e.clientX - r.left) / r.width - 0.5;
                 var py = (e.clientY - r.top) / r.height - 0.5;
@@ -81,6 +82,7 @@
             content.style.transition = 'transform 0.25s ease-out';
             content.style.transformStyle = 'preserve-3d';
             hero.addEventListener('pointermove', function (e) {
+                if (e.pointerType === 'touch') return;
                 var r = hero.getBoundingClientRect();
                 var dx = (e.clientX - r.left) / r.width - 0.5;
                 var dy = (e.clientY - r.top) / r.height - 0.5;

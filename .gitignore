@@ -10,3 +10,6 @@ venv/
 flask-err.log
 flask-out.log
 .vercel/
+scratch/
+qa_*.txt
+*.pyc

@@ -6,10 +6,17 @@
 
 {% block content %}
 <nav class="main-navbar">
-    <img src="{{ url_for('static', filename='img/final_logo.png') }}" alt="Guntur Logo" class="logo" onerror="this.style.display='none'">
-    <span class="main-title">Suraksha Kavach
-        <div class="main-subtitle">DEPARTMENT OF GOVERNMENT MUNICIPAL CORPORATION </div>
-    </span>
+    <a href="{{ url_for('main.home') }}" class="main-navbar-brand">
+        <img src="{{ url_for('static', filename='img/final_logo.png') }}" alt="Guntur Logo" class="logo" onerror="this.style.display='none'">
+        <span class="main-title">Suraksha Kavach
+            <div class="main-subtitle">DEPARTMENT OF GOVERNMENT MUNICIPAL CORPORATION</div>
+        </span>
+    </a>
+    <div class="main-navbar-actions">
+        <button type="button" class="mobile-nav-toggle-btn" id="mobile-nav-toggle" aria-label="Open Navigation Menu">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
 </nav>
 
 <nav class="secondary-navbar">
@@ -87,6 +94,12 @@
             <button class="btn-detail-action btn-green" onclick="subscribeToNotifications()"><i class="fas fa-bell"></i> Enable Heavy Rain Push Alerts</button>
         </div>
     </div>
+
+    <!-- Universal Location-Based Rainfall Risk Search & Rate Engine -->
+    <div class="location-risk-search-widget" data-disaster="rainfall"></div>
+
+    <!-- Machine Learning Analytics & Predictive Multi-Granular Chart (Days, Months, Years) -->
+    <div class="disaster-chart-widget" data-disaster="rainfall" id="chart-widget-rainfall"></div>
 
     <!-- Rainfall Preparedness Unit: IMD APIs + AI/ML Prediction + Leaflet Map -->
     <div id="rainfall-preparedness-widget"></div>
@@ -185,12 +198,13 @@
 
 <style>
 .disaster-detail-container {
-    max-width: 1100px;
+    max-width: 1560px;
+    width: 97%;
     margin: 2rem auto;
-    padding: 2rem;
-    background: rgba(255,255,255,0.96);
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    padding: 2.2rem;
+    background: rgba(255,255,255,0.98);
+    border-radius: 18px;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.12);
 }
 
 .detail-hero {

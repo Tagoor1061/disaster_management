@@ -1,0 +1,212 @@
+{
+  "status": "success",
+  "system_status": "awaiting_verification",
+  "status_message": "IMD Live Data Connection \u2014 Awaiting Account Verification / Configuration",
+  "has_active_cyclone": false,
+  "cyclone_name": null,
+  "category": null,
+  "current_position": null,
+  "intensity": {
+    "mean_msw_kmph": null,
+    "msw_range_kmph": null,
+    "msw_kt": null,
+    "category": null
+  },
+  "observed_track": [],
+  "forecast_track": [],
+  "track_counts": {
+    "observed": 0,
+    "forecast": 0
+  },
+  "wind_warnings": {
+    "27kt": {
+      "threshold": "27kt",
+      "available": false,
+      "meta": {
+        "label": "27 kt (50 km/h) Gale Warning Zone",
+        "speed_range": "50\u201361 km/h (27\u201333 knots)",
+        "color": "#fbc02d",
+        "fillColor": "#ffeb3b",
+        "fillOpacity": 0.25,
+        "severity": "Moderate Gale"
+      },
+      "coordinates": null
+    },
+    "34kt": {
+      "threshold": "34kt",
+      "available": false,
+      "meta": {
+        "label": "34 kt (62 km/h) Strong Gale Warning Zone",
+        "speed_range": "62\u201388 km/h (34\u201347 knots)",
+        "color": "#f57c00",
+        "fillColor": "#ff9800",
+        "fillOpacity": 0.3,
+        "severity": "Strong Gale"
+      },
+      "coordinates": null
+    },
+    "50kt": {
+      "threshold": "50kt",
+      "available": false,
+      "meta": {
+        "label": "50 kt (92 km/h) Storm Force Wind Zone",
+        "speed_range": "89\u2013117 km/h (48\u201363 knots)",
+        "color": "#d32f2f",
+        "fillColor": "#f44336",
+        "fillOpacity": 0.35,
+        "severity": "Storm Force"
+      },
+      "coordinates": null
+    },
+    "64kt": {
+      "threshold": "64kt",
+      "available": false,
+      "meta": {
+        "label": "64 kt (118+ km/h) Hurricane Force Wind Zone",
+        "speed_range": "118+ km/h (64+ knots)",
+        "color": "#7b1fa2",
+        "fillColor": "#9c27b0",
+        "fillOpacity": 0.4,
+        "severity": "Hurricane Force"
+      },
+      "coordinates": null
+    }
+  },
+  "has_wind_warnings": false,
+  "cone_of_uncertainty": {
+    "has_cone": false,
+    "type": "MultiPolygon",
+    "coordinates": null,
+    "meta": {
+      "label": "IMD Forecast Cone of Uncertainty",
+      "description": "Represents the probable path of the cyclone center (60\u201390% confidence envelope). Does NOT indicate the full extent of the storm.",
+      "color": "#e65100",
+      "fillColor": "#ff9800",
+      "fillOpacity": 0.22,
+      "weight": 2,
+      "dashArray": "4, 6"
+    },
+    "api_status": {
+      "available": false,
+      "status": "AWAITING_VERIFICATION",
+      "status_code": 401,
+      "message": "IMD COU API authentication pending verification (HTTP 401).",
+      "source": "India Meteorological Department (IMD)",
+      "endpoint": "https://api.imd.gov.in/api/v1/cyclone_cou"
+    },
+    "is_cached": false,
+    "cached_at": null,
+    "received_at": "2026-09-07 16:37:31"
+  },
+  "satellite_info": {
+    "available": true,
+    "status": "LIVE",
+    "message": "Live INSAT satellite imagery retrieved from MOSDAC RSS feed.",
+    "satellite": "INSAT-3DR",
+    "sensor": "IMAGER",
+    "channel": "3RIMG_L1C_ASIA_MER",
+    "imageUrl": "http://mosdac.gov.in/look/3R_IMG/preview/2022/24AUG/3RIMG_24AUG2022_0745_L1C_ASIA_MER_IR1.jpg",
+    "timestamp": "Wed, 24 Aug 2022 08:32:00 GMT",
+    "source": "Space Applications Centre, ISRO (MOSDAC)",
+    "official_portals": {
+      "cyclone_service": "https://www.mosdac.gov.in/cyclone",
+      "scorpio_wind": "https://mosdac.gov.in/scorpio/",
+      "ocean_gallery": "https://mosdac.gov.in/gallery/index.html?ds=ocean",
+      "mosdac_home": "https://www.mosdac.gov.in/",
+      "rss_feed": "https://mosdac.gov.in/3drimager.xml"
+    },
+    "available_layers": [
+      {
+        "id": "esri_satellite",
+        "name": "High-Resolution Satellite Imagery",
+        "type": "basemap",
+        "url": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        "attribution": "Tiles &copy; Esri, Earthstar Geographics",
+        "is_active": true
+      },
+      {
+        "id": "carto_light",
+        "name": "Clean Meteorological Base Map",
+        "type": "basemap",
+        "url": "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+        "attribution": "&copy; OpenStreetMap contributors &copy; CARTO",
+        "is_active": false
+      }
+    ],
+    "last_checked": "2026-09-07 16:37:31"
+  },
+  "guntur_risk_analysis": {
+    "source": "Suraksha Kavach Local Risk Analysis",
+    "disclaimer": "Calculated by Suraksha Kavach algorithms based on official IMD feeds.",
+    "threat_level": "LOW",
+    "threat_badge": "\ud83d\udfe2 Normal / No Active Coastal Threat",
+    "distance_to_eye_km": null,
+    "closest_approach_km": null,
+    "bearing_to_eye": null,
+    "direction": null,
+    "closest_forecast_time": null,
+    "guntur_in_wind_zone": false,
+    "guntur_in_cone": false,
+    "active_warnings": [],
+    "advisory": "No active tropical cyclones currently detected in the North Indian Ocean basin. Routine coastal monitoring is maintained in coordination with IMD and APSDMA.",
+    "mandal_readiness": {
+      "coastal_mandals": [
+        "Bapatla",
+        "Nizampatnam",
+        "Repalle",
+        "Karlapalem"
+      ],
+      "status": "Normal Watch",
+      "shelter_status": "Pre-positioned / Standby"
+    }
+  },
+  "storm_surge_assessment": {
+    "available": false,
+    "status": "MODEL_REQUIRED",
+    "message": "Storm surge assessment requires verified coastal/ocean hydrodynamic model data.",
+    "disclaimer": "Official IMD cyclone track API provides atmospheric parameters. Storm surge heights are not fabricated."
+  },
+  "sources": {
+    "imd_track": {
+      "available": false,
+      "status": "AWAITING_VERIFICATION",
+      "status_code": 401,
+      "message": "IMD API authentication required (HTTP 401) \u2014 Account awaiting verification.",
+      "source": "India Meteorological Department (IMD)",
+      "endpoint": "https://api.imd.gov.in/api/v1/cyclone_track"
+    },
+    "imd_wind": {
+      "available": false,
+      "status": "AWAITING_VERIFICATION",
+      "status_code": 401,
+      "message": "IMD Wind API authentication pending verification (HTTP 401).",
+      "source": "India Meteorological Department (IMD)",
+      "endpoint": "https://api.imd.gov.in/api/v1/cyclone_wind"
+    },
+    "imd_cou": {
+      "available": false,
+      "status": "AWAITING_VERIFICATION",
+      "status_code": 401,
+      "message": "IMD COU API authentication pending verification (HTTP 401).",
+      "source": "India Meteorological Department (IMD)",
+      "endpoint": "https://api.imd.gov.in/api/v1/cyclone_cou"
+    },
+    "mosdac_satellite": {
+      "status": "LIVE",
+      "available": true,
+      "source": "Space Applications Centre, ISRO (MOSDAC)",
+      "message": "Live INSAT satellite imagery retrieved from MOSDAC RSS feed."
+    }
+  },
+  "received_at": "2026-09-07 16:37:32",
+  "observation_time": "Official IMD Bulletin Schedule",
+  "is_cached": false,
+  "official_portals": {
+    "imd_cyclone": "https://mausam.imd.gov.in/responsive/cycloneinformation.php",
+    "rsmc_newdelhi": "https://rsmcnewdelhi.imd.gov.in/",
+    "mosdac_cyclone": "https://www.mosdac.gov.in/cyclone",
+    "mosdac_home": "https://www.mosdac.gov.in/",
+    "mosdac_scorpio": "https://mosdac.gov.in/scorpio/",
+    "mosdac_gallery": "https://mosdac.gov.in/gallery/"
+  }
+}

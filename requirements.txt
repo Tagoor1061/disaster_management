@@ -12,3 +12,5 @@ pywebpush
 cffi
 scipy
 statsmodels
+gunicorn
+psycopg2-binary

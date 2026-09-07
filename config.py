@@ -14,7 +14,11 @@ class Config:
     os.makedirs(instance_dir, exist_ok=True)
     db_file = os.path.join(instance_dir, 'guntur.db')
 
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', f'sqlite:///{db_file}')
+    raw_db_url = os.getenv('DATABASE_URL')
+    if raw_db_url and raw_db_url.startswith('postgres://'):
+        raw_db_url = raw_db_url.replace('postgres://', 'postgresql://', 1)
+
+    SQLALCHEMY_DATABASE_URI = raw_db_url or f'sqlite:///{db_file}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # External service keys. Keep real values in .env, not in source control.
@@ -23,6 +27,14 @@ class Config:
     WEATHER_LATITUDE = float(os.getenv('WEATHER_LATITUDE', '16.3067'))
     WEATHER_LONGITUDE = float(os.getenv('WEATHER_LONGITUDE', '80.4365'))
     WEATHER_CITY = os.getenv('WEATHER_CITY', 'Guntur')
+
+    # Official Meteorological & Satellite APIs
+    IMD_EMAIL = os.getenv('IMD_EMAIL', '')
+    IMD_PASSWORD = os.getenv('IMD_PASSWORD', '')
+    IMD_API_KEY = os.getenv('IMD_API_KEY', '')
+    MOSDAC_API_KEY = os.getenv('MOSDAC_API_KEY', '')
+    MOSDAC_USERNAME = os.getenv('MOSDAC_USERNAME', '')
+    MOSDAC_PASSWORD = os.getenv('MOSDAC_PASSWORD', '')
 
     # Web Push VAPID keys. Generate these for each deployment.
     VAPID_PRIVATE_KEY = os.getenv('VAPID_PRIVATE_KEY', '')

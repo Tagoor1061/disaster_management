@@ -237,6 +237,13 @@
             attribution: '© OpenStreetMap | IMD Wind Preparedness'
         }).addTo(map);
 
+        if (typeof L.control.locationSearch === 'function') {
+            L.control.locationSearch({
+                position: 'topright',
+                placeholder: '🔍 Search location in wind map...'
+            }).addTo(map);
+        }
+
         // ---- Layer 1: district warning polygons (Red/Orange/Yellow/Green) ----
         const warnings = live?.district_warnings?.warnings || [];
         warnings.forEach(w => {

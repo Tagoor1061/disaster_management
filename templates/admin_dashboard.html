@@ -2,94 +2,1539 @@
 
 {% block body_class %}other-page{% endblock %}
 
-{% block title %}Admin Dashboard{% endblock %}
+{% block title %}Admin Dashboard — Jal Suraksha GMC{% endblock %}
 
 {% block content %}
-<section style="max-width: 1000px; margin: 2rem auto; padding: 0 1rem;">
-    <h1>Welcome, {{ current_user.username }}</h1>
-    <p>You are logged in as a <strong>{{ current_user.role }}</strong>.</p>
+<style>
+    /* =========================================================================
+       1. PAGE SCROLLING & BASE STYLES
+       ========================================================================= */
+    html, body {
+        height: auto !important;
+        min-height: 100vh !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        margin: 0;
+        padding: 0;
+        scroll-behavior: smooth;
+    }
 
+    main {
+        min-height: 100vh !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    .admin-container {
+        max-width: 1560px;
+        width: 97%;
+        margin: 2rem auto 4rem auto;
+        padding: 0 1.5rem 4rem 1.5rem;
+        overflow-y: visible !important;
+    }
+
+    /* Unified Action Button */
+    .btn-resolve-unified {
+        background: linear-gradient(135deg, #15803d 0%, #16a34a 100%);
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 0.86rem;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 8px rgba(22, 163, 74, 0.25);
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        line-height: 1.25;
+        white-space: nowrap;
+    }
+    .btn-resolve-unified:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35);
+        background: linear-gradient(135deg, #166534 0%, #15803d 100%);
+    }
+
+    /* Table Styling */
+    .admin-table-wrap {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 1.5rem 0 3rem 0;
+        background: #ffffff;
+        border-radius: 12px;
+        border: 1px solid #cbd5e1;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+    }
+    .admin-issues-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 780px;
+    }
+    .admin-issues-table th {
+        background: #f8fafc;
+        color: #334155;
+        padding: 12px 14px;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid #e2e8f0;
+        text-align: left;
+    }
+    .admin-issues-table td {
+        padding: 12px 14px;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+        font-size: 0.9rem;
+    }
+    .admin-issues-table tr:hover {
+        background: #f8fafc;
+    }
+
+    /* Modal Backdrop & Scroll Container */
+    .resolve-modal-backdrop {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(15, 23, 42, 0.75);
+        backdrop-filter: blur(5px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100000;
+        padding: 1rem;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+    .resolve-modal-card {
+        background: #ffffff;
+        border-radius: 16px;
+        max-width: 640px;
+        width: 100%;
+        margin: auto;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+        display: flex;
+        flex-direction: column;
+        max-height: 90vh;
+        animation: modalFadeIn 0.25s ease-out;
+        overflow: hidden;
+    }
+    @keyframes modalFadeIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    .resolve-modal-header {
+        padding: 1.2rem 1.5rem;
+        background: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-shrink: 0;
+    }
+    .resolve-modal-close {
+        background: none;
+        border: none;
+        font-size: 1.6rem;
+        color: #64748b;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0 4px;
+    }
+    .resolve-modal-close:hover { color: #0f172a; }
+    .resolve-modal-body {
+        padding: 1.5rem;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+        flex: 1;
+        max-height: calc(90vh - 140px);
+    }
+    .resolve-info-summary {
+        background: #f0fdf4;
+        border-radius: 10px;
+        padding: 1rem 1.1rem;
+        margin-bottom: 1.2rem;
+        border: 1.5px solid #86efac;
+    }
+    .btn-cam-action {
+        border: none;
+        padding: 9px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.88rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: all 0.2s ease;
+    }
+    .btn-cam-action:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.05);
+    }
+    .delivery-channels-box {
+        background: #f0fdf4;
+        border: 1.5px solid #86efac;
+        border-radius: 8px;
+        padding: 0.85rem 1rem;
+        margin-top: 0.8rem;
+    }
+    .resolve-modal-footer {
+        padding: 1rem 1.5rem;
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.8rem;
+        flex-shrink: 0;
+    }
+    .btn-modal-cancel {
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #cbd5e1;
+        padding: 9px 18px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    .btn-modal-confirm {
+        background: linear-gradient(135deg, #15803d 0%, #16a34a 100%);
+        color: white;
+        border: none;
+        padding: 11px 24px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .btn-modal-confirm:hover {
+        background: linear-gradient(135deg, #166534 0%, #15803d 100%);
+    }
+    .btn-modal-confirm:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+
+    /* Live Camera Viewfinder Box Styling (Matching User Dashboard) */
+    .admin-cam-viewfinder {
+        position: relative;
+        background: #0f172a;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 0.8rem;
+        border: 2px solid #0284c7;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+    }
+    .admin-cam-video {
+        width: 100%;
+        height: 260px;
+        object-fit: cover;
+        display: block;
+        background: #000;
+    }
+    .admin-cam-video.mirror {
+        transform: scaleX(-1);
+    }
+    .admin-cam-controls-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+        background: rgba(15, 23, 42, 0.9);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    .admin-cam-select {
+        background: #1e293b;
+        color: #f8fafc;
+        border: 1px solid #475569;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        outline: none;
+        max-width: 250px;
+    }
+    .admin-cam-bottom-bar {
+        position: absolute;
+        bottom: 12px;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        gap: 0.8rem;
+        z-index: 10;
+    }
+
+    /* Multi-Disaster Admin Marker Controls */
+    .disaster-admin-toolbar {
+        background: #ffffff;
+        border: 2px solid #0284c7;
+        border-radius: 14px;
+        padding: 1.25rem;
+        margin-bottom: 1.25rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    }
+    .disaster-menu-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .disaster-tab-btn {
+        padding: 7px 14px;
+        border-radius: 20px;
+        border: 1.5px solid #cbd5e1;
+        background: #f8fafc;
+        color: #334155;
+        font-weight: 700;
+        font-size: 0.88rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: all 0.2s ease;
+    }
+    .disaster-tab-btn:hover {
+        background: #e2e8f0;
+        transform: translateY(-1px);
+    }
+    .disaster-tab-btn.active {
+        background: #0284c7;
+        color: #ffffff;
+        border-color: #0369a1;
+        box-shadow: 0 3px 10px rgba(2, 132, 199, 0.3);
+    }
+    .disaster-tab-btn .badge-count {
+        background: rgba(0,0,0,0.08);
+        padding: 1px 7px;
+        border-radius: 10px;
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+    .disaster-tab-btn.active .badge-count {
+        background: #ffffff;
+        color: #0284c7;
+        font-weight: 800;
+    }
+    .adm-controls-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    .adm-control-block {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+    .adm-control-block label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #334155;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .adm-btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .adm-tool-btn, .adm-risk-btn {
+        padding: 6px 12px;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 8px;
+        background: #f8fafc;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #334155;
+        transition: all 0.15s ease;
+    }
+    .adm-tool-btn:hover, .adm-risk-btn:hover {
+        background: #e2e8f0;
+    }
+    .adm-tool-btn.active {
+        background: #0284c7;
+        color: #ffffff;
+        border-color: #0369a1;
+    }
+    .adm-tool-btn.eraser.active {
+        background: #dc2626;
+        color: #ffffff;
+        border-color: #b91c1c;
+    }
+    .adm-risk-btn.safe.active { background: #16a34a; color: white; border-color: #15803d; }
+    .adm-risk-btn.moderate.active { background: #d97706; color: white; border-color: #b45309; }
+    .adm-risk-btn.danger.active { background: #dc2626; color: white; border-color: #b91c1c; }
+    .adm-risk-btn.severe.active { background: #7c3aed; color: white; border-color: #6d28d9; }
+    .adm-input-text {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 0.88rem;
+        color: #1e293b;
+        outline: none;
+    }
+    .adm-input-text:focus {
+        border-color: #0284c7;
+        box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+    .adm-actions-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        padding-top: 0.8rem;
+        border-top: 1px dashed #cbd5e1;
+    }
+    .adm-action-save {
+        background: #16a34a;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        box-shadow: 0 3px 10px rgba(22, 163, 74, 0.25);
+    }
+    .adm-action-save:hover { background: #15803d; }
+    .adm-action-clear {
+        background: #f59e0b;
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.88rem;
+        cursor: pointer;
+    }
+    .adm-action-clear:hover { background: #d97706; }
+    .adm-action-danger {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fca5a5;
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.88rem;
+        cursor: pointer;
+    }
+    .adm-action-danger:hover { background: #fecaca; }
+</style>
+
+<nav class="main-navbar">
+    <a href="{{ url_for('main.home') }}" class="main-navbar-brand">
+        <img src="{{ url_for('static', filename='img/final_logo.png') }}" alt="Guntur Logo" class="logo" onerror="this.style.display='none'">
+        <span class="main-title">Suraksha Kavach
+            <div class="main-subtitle">ADMIN CONTROL & DISASTER GIS COMMAND</div>
+        </span>
+    </a>
+    <div class="main-navbar-actions">
+        <button type="button" class="mobile-nav-toggle-btn" id="mobile-nav-toggle" aria-label="Open Navigation Menu">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+</nav>
+
+<section class="admin-container">
+    <!-- Header -->
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
+        <div>
+            <h1 style="margin:0; font-size:1.85rem; color:#1e293b;">Welcome, {{ current_user.username }}</h1>
+            <p style="margin:0.25rem 0 0; color:#64748b;">You are logged in as <strong style="color:#0284c7;">{{ current_user.role|upper }}</strong>.</p>
+        </div>
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <a href="{{ url_for('main.home') }}" class="logout-btn" style="text-decoration:none; padding:8px 16px; border-radius:8px; font-weight:600; background:#f1f5f9; color:#334155; border:1px solid #cbd5e1; display:inline-flex; align-items:center; gap:0.4rem;">🏠 Home</a>
+            <a href="{{ url_for('viewmap.view_map') }}" class="btn-primary" style="text-decoration:none; padding:8px 16px; border-radius:8px; font-weight:600; background:#2E8B57; color:white; display:inline-flex; align-items:center; gap:0.4rem;">🗺️ GIS Zone Markings</a>
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-danger" style="text-decoration:none; padding:8px 16px; border-radius:8px; font-weight:600; background:#dc2626; color:white; display:inline-flex; align-items:center; gap:0.4rem;">🚪 Logout</a>
+        </div>
+    </div>
+
+    <!-- Alert / Toast Messages -->
+    <div id="admin-toast-container"></div>
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}
-          <div class="alert alert-{{ category if category != 'danger' else 'danger' }}" style="background-color: {% if category == 'danger' %}#f8d7da{% elif category == 'success' %}#d4edda{% else %}#e2e3e5{% endif %}; color: {% if category == 'danger' %}#721c24{% elif category == 'success' %}#155724{% else %}#383d41{% endif %}; border: 1px solid {% if category == 'danger' %}#f5c6cb{% elif category == 'success' %}#c3e6cb{% else %}#d6d8db{% endif %}; padding: 0.9rem 1.2rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: left; font-size: 1rem; line-height: 1.5;">
+          <div class="alert alert-{{ category if category != 'danger' else 'danger' }}" style="background-color: {% if category == 'danger' %}#fee2e2{% elif category == 'success' %}#dcfce7{% else %}#f1f5f9{% endif %}; color: {% if category == 'danger' %}#991b1b{% elif category == 'success' %}#166534{% else %}#334155{% endif %}; border: 1px solid {% if category == 'danger' %}#fca5a5{% elif category == 'success' %}#86efac{% else %}#cbd5e1{% endif %}; padding: 0.9rem 1.2rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: left; font-size: 0.95rem; line-height: 1.5;">
             <i class="fas {% if category == 'danger' %}fa-exclamation-circle{% elif category == 'success' %}fa-check-circle{% else %}fa-info-circle{% endif %}" style="margin-right: 6px;"></i> {{ message }}
           </div>
         {% endfor %}
       {% endif %}
     {% endwith %}
 
-    <div style="max-inline-size:900px;margin:2rem auto;">
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1rem;">
-            <h2 style="margin:0;">Reported Issues & Area Safety Zones</h2>
-            <a href="{{ url_for('viewmap.view_map') }}" class="btn-primary" style="text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:600;background:#2E8B57;color:white;">
-                🗺️ Draw & Mark Safety Zones
+    <!-- Auto WhatsApp Link Trigger if present from last resolve action -->
+    {% if session.get('auto_whatsapp_url') %}
+    <div style="background:#dcfce7; border:2px solid #22c55e; border-radius:10px; padding:1rem; margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.8rem;">
+        <div>
+            <strong style="color:#15803d; font-size:1.05rem;">💬 WhatsApp Alert Ready!</strong>
+            <p style="margin:0.2rem 0 0; color:#166534; font-size:0.9rem;">Click the button to send the pre-filled official resolution alert directly to citizen's WhatsApp.</p>
+        </div>
+        <a href="{{ session.pop('auto_whatsapp_url') }}" target="_blank" rel="noopener" style="background:#22c55e; color:white; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:700; display:inline-flex; align-items:center; gap:0.5rem; box-shadow:0 4px 12px rgba(34,197,94,0.3);">
+            <i class="fab fa-whatsapp" style="font-size:1.2rem;"></i> Open Citizen WhatsApp Alert
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Multi-Hazard Disaster Indicator & Map Marking Management Suite -->
+    <div style="margin:2.5rem auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1rem;">
+            <div>
+                <h2 style="margin:0; font-size:1.45rem; color:#1e293b; display:flex; align-items:center; gap:0.5rem;">
+                    <span>🛡️</span> Multi-Hazard Disaster Map Indications & Risk Zones
+                </h2>
+                <span style="font-size:0.88rem; color:#64748b;">Add official indicators and hazard marks across all natural disaster categories for citizens to view</span>
+            </div>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                <!-- Mobile / Desktop Dedicated Quick Place Location Button -->
+                <button type="button" id="adm-btn-open-location-picker" style="background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color:white; border:none; padding:8px 16px; border-radius:8px; font-weight:700; font-size:0.88rem; cursor:pointer; display:inline-flex; align-items:center; gap:0.4rem; box-shadow:0 2px 8px rgba(2,132,199,0.3);">
+                    📍 Place at Any Location / Coordinates
+                </button>
+                <a href="{{ url_for('viewmap.view_map') }}" target="_blank" class="btn-primary" style="text-decoration:none; padding:8px 16px; border-radius:8px; font-weight:700; background:#16a34a; color:white; font-size:0.88rem; display:inline-flex; align-items:center; gap:0.4rem;">
+                    🗺️ Open Citizen Map
+                </a>
+            </div>
+        </div>
+
+        <!-- Admin Disaster Indicator Toolbar Card -->
+        <div class="disaster-admin-toolbar">
+            <!-- 1. Disaster Category Selection Menu -->
+            <div style="margin-bottom:0.5rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.4rem;">
+                    <label style="font-size:0.8rem; font-weight:700; color:#334155; text-transform:uppercase; letter-spacing:0.5px; margin:0;">
+                        1. Select Natural Disaster Category:
+                    </label>
+                    <select id="adm-disaster-select" class="adm-input-text" style="width:auto; padding:5px 12px; font-weight:700; border:2px solid #0284c7; border-radius:8px; background:#f0f9ff; color:#0369a1; cursor:pointer;">
+                        <option value="floods">🌧️ Floods</option>
+                        <option value="cyclones">🌀 Cyclones</option>
+                        <option value="tsunamis">🌊 Tsunamis</option>
+                        <option value="earthquakes">🏚️ Earthquakes</option>
+                        <option value="winds">💨 Severe Winds</option>
+                        <option value="rainfall">🌧️ Rainfall</option>
+                        <option value="landslides">⛰️ Landslides</option>
+                        <option value="all">🌐 View All Hazards</option>
+                    </select>
+                </div>
+                <div class="disaster-menu-tabs" id="admin-disaster-tabs" style="overflow-x:auto; flex-wrap:nowrap; -webkit-overflow-scrolling:touch; padding-bottom:6px;">
+                    <button type="button" class="disaster-tab-btn active" data-disaster="floods">
+                        <span>🌧️ Floods</span> <span class="badge-count" id="count-floods">0</span>
+                    </button>
+                    <button type="button" class="disaster-tab-btn" data-disaster="cyclones">
+                        <span>🌀 Cyclones</span> <span class="badge-count" id="count-cyclones">0</span>
+                    </button>
+                    <button type="button" class="disaster-tab-btn" data-disaster="tsunamis">
+                        <span>🌊 Tsunamis</span> <span class="badge-count" id="count-tsunamis">0</span>
+                    </button>
+                    <button type="button" class="disaster-tab-btn" data-disaster="earthquakes">
+                        <span>🏚️ Earthquakes</span> <span class="badge-count" id="count-earthquakes">0</span>
+                    </button>
+                    <button type="button" class="disaster-tab-btn" data-disaster="winds">
+                        <span>💨 Severe Winds</span> <span class="badge-count" id="count-winds">0</span>
+                    </button>
+                    <button type="button" class="disaster-tab-btn" data-disaster="rainfall">
+                        <span>🌧️ Rainfall</span> <span class="badge-count" id="count-rainfall">0</span>
+                    </button>
+                    <button type="button" class="disaster-tab-btn" data-disaster="landslides">
+                        <span>⛰️ Landslides</span> <span class="badge-count" id="count-landslides">0</span>
+                    </button>
+                    <button type="button" class="disaster-tab-btn" data-disaster="all">
+                        <span>🌐 View All Hazards</span> <span class="badge-count" id="count-all">0</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2. Controls Grid: Tools, Severity, Title, Advisory -->
+            <div class="adm-controls-grid">
+                <!-- Marking Tool -->
+                <div class="adm-control-block">
+                    <label>2. Marking Tool:</label>
+                    <div class="adm-btn-group" id="admin-tool-buttons">
+                        <button type="button" class="adm-tool-btn active" data-tool="marker" title="Place Marker Pin">📍 Marker Pin</button>
+                        <button type="button" class="adm-tool-btn" data-tool="circle" title="Draw Circular Hazard Radius">⭕ Circle</button>
+                        <button type="button" class="adm-tool-btn" data-tool="pencil" title="Freehand Hazard Line">✏️ Pencil</button>
+                        <button type="button" class="adm-tool-btn" data-tool="rectangle" title="Draw Sector Rectangle">⬛ Rectangle</button>
+                        <button type="button" class="adm-tool-btn" data-tool="polygon" title="Draw Custom Polygon Area">⬡ Polygon</button>
+                        <button type="button" class="adm-tool-btn eraser" data-tool="eraser" title="Click shape on map to delete">🧹 Eraser</button>
+                    </div>
+                </div>
+
+                <!-- Severity & Risk Level -->
+                <div class="adm-control-block">
+                    <label>3. Risk Severity Level:</label>
+                    <div class="adm-btn-group" id="admin-risk-buttons">
+                        <button type="button" class="adm-risk-btn safe active" data-risk="safe" data-color="green" data-hex="#16a34a">🟢 Safe / Low</button>
+                        <button type="button" class="adm-risk-btn moderate" data-risk="moderate" data-color="yellow" data-hex="#d97706">🟡 Moderate</button>
+                        <button type="button" class="adm-risk-btn danger" data-risk="danger" data-color="red" data-hex="#dc2626">🔴 High Risk</button>
+                        <button type="button" class="adm-risk-btn severe" data-risk="severe" data-color="purple" data-hex="#7c3aed">🟣 Critical</button>
+                    </div>
+                </div>
+
+                <!-- Custom Title -->
+                <div class="adm-control-block" style="grid-column: span 1;">
+                    <label for="adm-marker-title">4. Zone / Indicator Title:</label>
+                    <input type="text" id="adm-marker-title" class="adm-input-text" placeholder="e.g. Krishna River Basin Inundation Zone" value="Flood Risk Zone (Marker)">
+                </div>
+
+                <!-- Advisory / Notes -->
+                <div class="adm-control-block" style="grid-column: span 1;">
+                    <label for="adm-marker-advisory">5. Citizen Guidance / Advisory Note:</label>
+                    <input type="text" id="adm-marker-advisory" class="adm-input-text" placeholder="e.g. Water depth > 3.5m. Low-lying residents move to Shelter 4." value="">
+                </div>
+            </div>
+
+            <!-- Mobile Polygon Complete Button (Shown during polygon drawing) -->
+            <div id="adm-polygon-controls-bar" style="display:none; background:#f0f9ff; border:1.5px solid #38bdf8; border-radius:8px; padding:0.6rem 1rem; margin-bottom:0.8rem; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                <span style="font-size:0.85rem; color:#0369a1; font-weight:700;"><i class="fas fa-draw-polygon"></i> Tapping points on map. Points added: <b id="adm-poly-point-count">0</b></span>
+                <button type="button" id="adm-finish-poly-btn" style="background:#16a34a; color:white; border:none; padding:6px 14px; border-radius:6px; font-weight:700; font-size:0.85rem; cursor:pointer;">
+                    ✅ Complete Polygon
+                </button>
+            </div>
+
+            <!-- Action Buttons Bar & Status -->
+            <div class="adm-actions-bar">
+                <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
+                    <button type="button" id="adm-save-btn" class="adm-action-save">
+                        <i class="fas fa-save"></i> 💾 Save Markings to Database
+                    </button>
+                    <button type="button" id="adm-clear-draft-btn" class="adm-action-clear">
+                        🔄 Clear Draft Shapes (<span id="adm-draft-count">0</span>)
+                    </button>
+                    <button type="button" id="adm-delete-disaster-btn" class="adm-action-danger">
+                        🗑️ Delete Current Disaster Marks
+                    </button>
+                </div>
+                <div id="adm-status-msg" style="font-size:0.85rem; color:#0369a1; font-weight:600;">
+                    Click or tap on the map below to place a <strong>Floods</strong> marker.
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Container & Map -->
+        <div style="margin-bottom: 0.9rem;">
+            <div id="admin-map-search-container"></div>
+        </div>
+        <div id="admin-map" style="block-size:480px; border-radius:12px; border:1px solid #cbd5e1; box-shadow:0 4px 15px rgba(0,0,0,0.06);"></div>
+
+        <!-- Active Disaster Indicators Data Table -->
+        <div style="margin-top:1.5rem; background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; padding:1.2rem; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem; flex-wrap:wrap; gap:0.5rem;">
+                <h3 style="margin:0; font-size:1.1rem; color:#1e293b; display:flex; align-items:center; gap:0.4rem;">
+                    <span>📋</span> Active Disaster Indications Database (<span id="adm-table-count">0</span>)
+                </h3>
+                <span style="font-size:0.82rem; color:#64748b;">Marked indicators are immediately broadcast to citizens on View Map and User Dashboard</span>
+            </div>
+            <div class="admin-table-wrap" style="max-height: 280px; overflow-y: auto;">
+                <table class="admin-issues-table" style="font-size:0.85rem;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Disaster</th>
+                            <th>Title & Advisory</th>
+                            <th>Severity</th>
+                            <th>Shape</th>
+                            <th>Created</th>
+                            <th>By</th>
+                            <th style="text-align:center;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="disaster-markings-tbody">
+                        <tr><td colspan="8" style="text-align:center; padding:1.5rem; color:#94a3b8;">Loading disaster indications...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submitted Issues Table -->
+    <div style="margin:2.5rem auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <h2 style="margin:0; font-size:1.4rem; color:#1e293b;">📋 All Citizen Issue Reports (<span id="issue-count">{{ issues|length }}</span>)</h2>
+        </div>
+
+        <div class="admin-table-wrap">
+            <table class="admin-issues-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Photo Evidence</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Location</th>
+                        <th>Citizen Contact</th>
+                        <th>Reported Date</th>
+                        <th style="text-align:center;">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="issues-tbody">
+                    {% for issue in issues %}
+                    <tr id="issue-row-{{ issue.id }}">
+                        <td style="font-weight:700; color:#0284c7;">#{{ issue.id }}</td>
+                        <td style="text-align:center;">
+                            {% if issue.image_url %}
+                                <a href="{{ url_for('static', filename=issue.image_url) }}" target="_blank" title="Click to view full photo">
+                                    <img src="{{ url_for('static', filename=issue.image_url) }}" alt="Issue Photo" style="width:64px; height:64px; object-fit:cover; border-radius:8px; border:2px solid #0284c7; box-shadow:0 2px 6px rgba(0,0,0,0.12); display:inline-block;">
+                                </a>
+                            {% else %}
+                                <span style="color:#94a3b8; font-size:0.85em; font-style:italic;">No Photo</span>
+                            {% endif %}
+                        </td>
+                        <td style="max-width:220px; font-size:0.92rem; color:#1e293b;">{{ issue.description }}</td>
+                        <td><span style="background:#e0f2fe; color:#0369a1; padding:4px 10px; border-radius:12px; font-size:0.82em; font-weight:bold;">{{ issue.status|upper }}</span></td>
+                        <td style="font-size:0.85rem; color:#475569; white-space:nowrap;">
+                            📍 {{ issue.latitude }},<br>{{ issue.longitude }}
+                        </td>
+                        <td style="font-size:0.85rem; color:#334155;">
+                            <strong>{{ issue.user.username if issue.user else 'Anonymous' }}</strong>
+                            {% if issue.user and issue.user.role == 'admin' %}
+                                <span style="background:#fee2e2; color:#991b1b; padding:1px 6px; border-radius:4px; font-size:0.75rem; font-weight:bold;">ADMIN</span>
+                            {% endif %}
+                            <br>
+                            <small style="color:#64748b;">
+                                ✉️ {{ issue.user.email if issue.user else 'N/A' }}<br>
+                                📱 {{ issue.user.phone if issue.user and issue.user.phone else 'N/A' }}
+                            </small>
+                        </td>
+                        <td style="font-size:0.85rem; color:#64748b; white-space:nowrap;">{{ issue.timestamp.strftime('%Y-%m-%d %H:%M') if issue.timestamp else '' }}</td>
+                        <td style="text-align:center;">
+                            <!-- Unified Multi-Channel Action Button with Safe Data Attributes -->
+                            <button type="button" class="btn-resolve-unified btn-trigger-resolve"
+                                data-issue-id="{{ issue.id }}"
+                                data-description="{{ issue.description|e }}"
+                                data-username="{{ issue.user.username if issue.user else 'Citizen' }}"
+                                data-phone="{{ issue.user.phone if issue.user and issue.user.phone else '' }}"
+                                data-email="{{ issue.user.email if issue.user and issue.user.email else '' }}"
+                                data-user-role="{{ issue.user.role if issue.user else 'user' }}"
+                                data-latitude="{{ issue.latitude }}"
+                                data-longitude="{{ issue.longitude }}">
+                                <i class="fas fa-paper-plane"></i> Resolve & Multi-Channel Alert
+                                <span style="font-size:0.75rem; font-weight:400; opacity:0.9;">(SMS + Email + WhatsApp)</span>
+                            </button>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr id="no-issues-row">
+                        <td colspan="8" style="padding:2.5rem; text-align:center; color:#64748b; font-size:1.05rem;">
+                            🎉 No pending issues! All civic reports have been inspected and cleared.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================================================
+     ADMIN RESOLUTION & MULTI-CHANNEL ALERT MODAL (OFFICIAL MESSAGING DISPATCH)
+     ========================================================================= -->
+<div id="resolve-modal-overlay" class="resolve-modal-backdrop" style="display:none;">
+    <div class="resolve-modal-card">
+        <div class="resolve-modal-header">
+            <div>
+                <h3 style="margin:0; font-size:1.25rem; color:#0f172a; display:flex; align-items:center; gap:0.5rem;">
+                    <i class="fas fa-shield-alt" style="color:#16a34a;"></i> Resolve Issue & Send Citizen Alert
+                </h3>
+                <span id="modal-issue-subtitle" style="font-size:0.85rem; color:#64748b;">Official Municipal Resolution & Multi-Channel Notification</span>
+            </div>
+            <button type="button" class="resolve-modal-close" id="btn-close-modal-x">&times;</button>
+        </div>
+
+        <form id="resolve-form" method="POST" enctype="multipart/form-data" action="/sendMessage">
+            <input type="hidden" name="issue_id" id="modal-issue-id-input" value="">
+            <div class="resolve-modal-body">
+                <!-- Citizen Contact Confirmation & Verification Box -->
+                <div class="resolve-info-summary">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+                        <strong style="color:#15803d; font-size:0.95rem;">👤 Citizen Recipient Information:</strong>
+                        <span id="modal-citizen-badge" style="background:#dcfce7; color:#166534; font-size:0.75rem; padding:2px 8px; border-radius:10px; font-weight:700;">CITIZEN RECIPIENT</span>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; font-size:0.88rem; margin-bottom:0.5rem;">
+                        <div>
+                            <label style="display:block; font-size:0.78rem; font-weight:700; color:#334155; margin-bottom:2px;">Citizen Name:</label>
+                            <input type="text" name="custom_name" id="modal-custom-name" style="width:100%; box-sizing:border-box; border:1px solid #cbd5e1; border-radius:6px; padding:6px 8px; font-size:0.88rem; background:white;">
+                        </div>
+                        <div>
+                            <label style="display:block; font-size:0.78rem; font-weight:700; color:#334155; margin-bottom:2px;">📱 Citizen Mobile (10-digit):</label>
+                            <input type="text" name="custom_phone" id="modal-custom-phone" placeholder="e.g. 7989332358" style="width:100%; box-sizing:border-box; border:1px solid #cbd5e1; border-radius:6px; padding:6px 8px; font-size:0.88rem; background:white; font-weight:600; color:#0284c7;">
+                        </div>
+                        <div style="grid-column:1 / -1;">
+                            <label style="display:block; font-size:0.78rem; font-weight:700; color:#334155; margin-bottom:2px;">✉️ Citizen Email Address:</label>
+                            <input type="email" name="custom_email" id="modal-custom-email" placeholder="citizen@gmail.com" style="width:100%; box-sizing:border-box; border:1px solid #cbd5e1; border-radius:6px; padding:6px 8px; font-size:0.88rem; background:white; font-weight:600; color:#0284c7;">
+                        </div>
+                    </div>
+
+                    <div style="margin-top:0.4rem; font-size:0.82rem; color:#475569; border-top:1px dashed #cbd5e1; padding-top:0.4rem;">
+                        <strong>📍 Coordinates:</strong> <span id="modal-issue-coords">—</span> &nbsp;|&nbsp; <strong>📝 Problem:</strong> <span id="modal-issue-desc">—</span>
+                    </div>
+                </div>
+
+                <!-- Admin Custom Resolution Message Input -->
+                <div style="margin-bottom:1.2rem;">
+                    <label style="display:block; font-weight:700; font-size:0.92rem; color:#1e293b; margin-bottom:0.4rem;">
+                        ✍️ Official Resolution Note / Clear Message:
+                    </label>
+                    <textarea name="admin_message" id="modal-admin-message" rows="3" style="width:100%; box-sizing:border-box; border:1.5px solid #cbd5e1; border-radius:8px; padding:0.75rem; font-size:0.92rem; color:#1e293b; outline:none; font-family:inherit;" placeholder="Enter custom resolution note for citizen..."></textarea>
+                    <small style="color:#64748b; font-size:0.8rem;">This official note is dispatched in the Email, SMS, and WhatsApp message directly to the citizen.</small>
+                </div>
+
+                <!-- Admin Resolution Photo Evidence (Single 📷 Camera Button matching User Dashboard) -->
+                <div style="margin-bottom:1.2rem; background:#f8fafc; border:1.5px dashed #cbd5e1; border-radius:10px; padding:1rem;">
+                    <label style="display:block; font-weight:700; font-size:0.92rem; color:#1e293b; margin-bottom:0.6rem;">
+                        📷 Attach Photo Evidence (Camera & Photos):
+                    </label>
+
+                    <!-- Camera Error Notice Banner -->
+                    <div id="admin-camera-error" style="display:none; background:#fee2e2; border:1px solid #fca5a5; color:#991b1b; padding:0.7rem; border-radius:8px; font-size:0.85rem; margin-bottom:0.75rem;"></div>
+
+                    <!-- Trigger Action Buttons (Single Camera & Gallery Buttons) -->
+                    <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-bottom:0.75rem;">
+                        <!-- Single Camera Button (Integrated Camera & Windows Virtual Camera Support) -->
+                        <button type="button" id="admin-btn-camera" class="btn-cam-action" style="background:#0284c7; color:white;">
+                            <i class="fas fa-camera"></i> 📷 Camera
+                        </button>
+                        <!-- Gallery / Photo Browse Button -->
+                        <button type="button" id="admin-btn-browse" class="btn-cam-action" style="background:#f1f5f9; color:#334155; border:1px solid #cbd5e1;">
+                            <i class="fas fa-images"></i> 🖼️ Choose from Photos / Gallery
+                        </button>
+
+                        <!-- Hidden Inputs -->
+                        <input type="file" name="photo" id="admin-file-input" accept="image/*" style="display:none;">
+                        <input type="hidden" name="photo_base64" id="admin-photo-base64">
+                    </div>
+
+                    <!-- Live Camera Viewfinder Box (With Integrated & Windows Virtual Camera Switcher) -->
+                    <div id="admin-camera-box" class="admin-cam-viewfinder" style="display:none;">
+                        <!-- Top Camera Bar with Device Switcher Dropdown -->
+                        <div class="admin-cam-controls-bar">
+                            <span style="color:#94a3b8; font-size:0.85rem; font-weight:700; display:flex; align-items:center; gap:0.4rem;">
+                                <i class="fas fa-video" style="color:#38bdf8;"></i> Live Viewfinder
+                            </span>
+                            <div style="display:flex; align-items:center; gap:0.5rem;">
+                                <!-- Dropdown selecting between Integrated Camera & Windows Virtual Camera -->
+                                <select id="admin-camera-device-select" class="admin-cam-select" title="Choose Camera Source"></select>
+                                <button type="button" id="admin-btn-switch-cam" style="background:#334155; color:#f8fafc; border:none; padding:5px 10px; border-radius:6px; font-size:0.8rem; cursor:pointer; font-weight:600;">
+                                    <i class="fas fa-sync-alt"></i> Switch
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Live Video Stream -->
+                        <video id="admin-camera-video" class="admin-cam-video" autoplay playsinline muted></video>
+
+                        <!-- Bottom Capture & Cancel Controls -->
+                        <div class="admin-cam-bottom-bar">
+                            <button type="button" id="admin-btn-capture" style="background:#22c55e; color:white; border:none; padding:8px 20px; border-radius:20px; font-weight:700; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,0.4); display:flex; align-items:center; gap:0.4rem;">
+                                <i class="fas fa-camera"></i> Capture Photo
+                            </button>
+                            <button type="button" id="admin-btn-cancel-cam" style="background:#ef4444; color:white; border:none; padding:8px 16px; border-radius:20px; font-weight:700; cursor:pointer;">
+                                ✖ Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Photo Preview Card -->
+                    <div id="admin-photo-preview-wrap" style="display:none; align-items:center; gap:1rem; background:white; border:1px solid #e2e8f0; border-radius:8px; padding:0.5rem 0.8rem;">
+                        <img id="admin-photo-preview-img" src="" alt="Resolution Photo" style="width:60px; height:60px; object-fit:cover; border-radius:6px; border:1px solid #cbd5e1;">
+                        <div style="flex:1; min-width:0;">
+                            <strong id="admin-photo-name" style="font-size:0.85rem; color:#1e293b; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Photo Evidence Attached</strong>
+                            <small style="color:#16a34a; font-weight:600; font-size:0.78rem;">✅ Ready to send with clear confirmation</small>
+                        </div>
+                        <button type="button" id="admin-btn-remove-photo" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:1.2rem; font-weight:bold;" title="Remove photo">&times;</button>
+                    </div>
+                </div>
+
+                <!-- Multi-Channel Delivery Channels Summary -->
+                <div class="delivery-channels-box">
+                    <span style="font-weight:700; color:#15803d; font-size:0.85rem; display:block; margin-bottom:4px;">
+                        🚀 3-IN-1 OFFICIAL MULTI-CHANNEL DISPATCH:
+                    </span>
+                    <div style="display:flex; gap:0.6rem; flex-wrap:wrap; font-size:0.82rem; color:#166534;">
+                        <span>✉️ <b>Email</b> (HTML + Photo + Notes via Gmail SMTP)</span>
+                        <span>•</span>
+                        <span>📱 <b>SMS</b> (Mobile Network Carrier Delivery)</span>
+                        <span>•</span>
+                        <span>💬 <b>WhatsApp</b> (Direct Official Alert)</span>
+                    </div>
+                    <small style="display:block; margin-top:4px; color:#64748b; font-size:0.75rem;">
+                        🛡️ Only the citizen receives these alerts. Admin accounts are automatically excluded.
+                    </small>
+                </div>
+            </div>
+
+            <div class="resolve-modal-footer">
+                <button type="button" class="btn-modal-cancel" id="btn-close-modal-footer">Cancel</button>
+                <button type="submit" id="btn-submit-resolve" class="btn-modal-confirm">
+                    <i class="fas fa-paper-plane"></i> Submit Resolution & Dispatch All Alerts
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- =========================================================================
+     POST-DISPATCH CITIZEN WHATSAPP & SMS MODAL (Instant One-Click Contact)
+     ========================================================================= -->
+<div id="dispatch-success-overlay" class="resolve-modal-backdrop" style="display:none;">
+    <div class="dispatch-success-modal">
+        <div style="font-size:2.8rem; margin-bottom:0.4rem;">🎉</div>
+        <h3 style="margin:0 0 0.4rem 0; color:#1e293b; font-size:1.35rem;">Issue Cleared & Alerts Dispatched!</h3>
+        <p id="dispatch-success-text" style="color:#475569; font-size:0.92rem; margin-bottom:1.2rem; line-height:1.4;">
+            Official resolution has been processed.
+        </p>
+
+        <!-- Live Delivery Status Badges -->
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:0.9rem; margin-bottom:1.2rem; text-align:left; font-size:0.86rem; display:flex; flex-direction:column; gap:0.4rem;">
+            <div id="status-email-badge" style="color:#166534; font-weight:600;"><i class="fas fa-check-circle" style="color:#22c55e;"></i> Email: Dispatched via Official SMTP</div>
+            <div id="status-sms-badge" style="color:#0369a1; font-weight:600;"><i class="fas fa-check-circle" style="color:#0284c7;"></i> SMS: Processed for Citizen Mobile</div>
+            <div id="status-wa-badge" style="color:#15803d; font-weight:600;"><i class="fab fa-whatsapp" style="color:#22c55e;"></i> WhatsApp: Pre-filled Official Alert Ready</div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:0.75rem; margin-bottom:1.2rem;">
+            <a id="dispatch-wa-btn" href="#" target="_blank" rel="noopener" style="background:#22c55e; color:white; padding:12px 20px; border-radius:10px; text-decoration:none; font-weight:700; display:flex; align-items:center; justify-content:center; gap:0.6rem; font-size:1.02rem; box-shadow:0 4px 15px rgba(34,197,94,0.3);">
+                <i class="fab fa-whatsapp" style="font-size:1.3rem;"></i> 💬 Click to Open Citizen WhatsApp Alert
+            </a>
+            <a id="dispatch-sms-btn" href="#" style="background:#0284c7; color:white; padding:10px 20px; border-radius:10px; text-decoration:none; font-weight:600; display:flex; align-items:center; justify-content:center; gap:0.6rem; font-size:0.92rem;">
+                <i class="fas fa-sms" style="font-size:1.1rem;"></i> 📱 Click to Send Mobile SMS to Citizen
             </a>
         </div>
-        <div id="admin-map" style="block-size:480px;border-radius:10px;"></div>
-    </div>
 
-    <div style="max-inline-size:900px;margin:2rem auto;overflow-x:auto;">
-        <h2>All Submitted Reports</h2>
-        <table class="table table-striped" style="inline-size:100%;margin-block-start:1.5rem;border: 2px solid #333;">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Description</th>
-                    <th>Status</th>
-                    <th>Latitude</th>
-                    <th>Longitude</th>
-                    <th>Reported By (Contact Details)</th>
-                    <th>Date</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for issue in issues %}
-                <tr>
-                    <td>{{ issue.id }}</td>
-                    <td>{{ issue.description }}</td>
-                    <td><span style="background:#e8f5e9;color:#2e7d32;padding:4px 8px;border-radius:12px;font-size:0.85em;font-weight:bold;">{{ issue.status|upper }}</span></td>
-                    <td>{{ issue.latitude }}</td>
-                    <td>{{ issue.longitude }}</td>
-                    <td>{{ issue.user.username if issue.user else 'Unknown' }}<br><small style="color:#555;">✉️ {{ issue.user.email if issue.user else 'N/A' }}<br>📱 {{ issue.user.phone if issue.user and issue.user.phone else 'N/A' }}</small></td>
-                    <td>{{ issue.timestamp.strftime('%Y-%m-%d %H:%M') if issue.timestamp else '' }}</td>
-                    <td>
-                        <form method="post" action="{{ url_for('main.clear_issue', issue_id=issue.id) }}" style="margin:0;">
-                            <button type="submit" class="btn btn-success" style="background:#2e7d32;color:white;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.85rem;" onclick="return confirm('Clear this issue and send notification email & SMS?');">
-                                ✅ Clear Issue (Send Email & SMS)
-                            </button>
-                        </form>
-                        {% if issue.user and issue.user.phone %}
-                            <a href="https://api.whatsapp.com/send?phone=91{{ issue.user.phone }}&text=Jal%20Suraksha%20Alert:%20Dear%20Citizen,%20your%20reported%20issue%20%23{{ issue.id }}%20('{{ issue.description|urlencode }}')%20has%20been%20CLEARED%20%26%20RESOLVED%20by%20Guntur%20Municipal%20Corporation." target="_blank" rel="noopener" style="display:inline-block;margin-top:6px;background:#25D366;color:white;text-decoration:none;padding:4px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;">
-                                💬 Send Direct WhatsApp Alert
-                            </a>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <button type="button" id="btn-close-dispatch-success" class="btn-modal-cancel" style="width:100%; padding:10px; font-weight:700;">
+            Done & Return to Dashboard
+        </button>
     </div>
+</div>
 
-    <a href="{{ url_for('main.home') }}" class="logout-btn" style="margin-inline-end:1rem;">Home</a>
-    <a href="{{ url_for('auth.logout') }}" class="btn btn-danger mt-3">Logout</a>
-</section>
+<!-- =========================================================================
+     ADMIN PLACE MARKER AT ANY LOCATION MODAL (MOBILE & DESKTOP MULTI-LOCATION)
+     ========================================================================= -->
+<div id="admin-location-modal" class="resolve-modal-backdrop" style="display:none;">
+    <div class="resolve-modal-card" style="max-width:580px;">
+        <div class="resolve-modal-header">
+            <div>
+                <h3 style="margin:0; font-size:1.25rem; color:#0f172a; display:flex; align-items:center; gap:0.5rem;">
+                    <i class="fas fa-map-pin" style="color:#0284c7;"></i> Place Hazard Marker at Any Location
+                </h3>
+                <span style="font-size:0.85rem; color:#64748b;">Add flood, cyclone, or hazard markers across various locations & wards</span>
+            </div>
+            <button type="button" class="resolve-modal-close" id="btn-close-loc-modal-x">&times;</button>
+        </div>
+
+        <div class="resolve-modal-body">
+            <!-- 1. Selection Method Navigation Tabs -->
+            <div style="display:flex; gap:0.4rem; margin-bottom:1rem; border-bottom:1.5px solid #e2e8f0; padding-bottom:0.6rem; overflow-x:auto;">
+                <button type="button" id="tab-loc-search" class="adm-tool-btn active" style="font-size:0.82rem; padding:6px 10px;">🔍 Search Place</button>
+                <button type="button" id="tab-loc-coords" class="adm-tool-btn" style="font-size:0.82rem; padding:6px 10px;">🌐 Coordinates</button>
+                <button type="button" id="tab-loc-wards" class="adm-tool-btn" style="font-size:0.82rem; padding:6px 10px;">🏛️ GMC Wards & Zones</button>
+                <button type="button" id="tab-loc-gps" class="adm-tool-btn" style="font-size:0.82rem; padding:6px 10px;">📌 GPS Location</button>
+            </div>
+
+            <!-- Panel 1: Search -->
+            <div id="panel-loc-search" style="margin-bottom:1rem;">
+                <label style="display:block; font-weight:700; font-size:0.85rem; color:#334155; margin-bottom:4px;">
+                    Search City, Ward, Street, or Landmark:
+                </label>
+                <div style="display:flex; gap:0.5rem;">
+                    <input type="text" id="loc-search-query" class="adm-input-text" placeholder="e.g. Tenali, Guntur Collectorate, Amaravati, Mangalagiri, Bapatla...">
+                    <button type="button" id="btn-do-loc-search" style="background:#0284c7; color:white; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer; flex-shrink:0;">
+                        🔍 Find
+                    </button>
+                </div>
+                <div id="loc-search-results-list" style="margin-top:0.5rem; max-height:160px; overflow-y:auto; display:none; border:1px solid #cbd5e1; border-radius:8px; background:#ffffff;"></div>
+            </div>
+
+            <!-- Panel 2: Direct Coordinates -->
+            <div id="panel-loc-coords" style="display:none; margin-bottom:1rem;">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem;">
+                    <div>
+                        <label style="display:block; font-weight:700; font-size:0.82rem; color:#334155; margin-bottom:4px;">Latitude (e.g. 16.3067):</label>
+                        <input type="number" step="any" id="loc-manual-lat" class="adm-input-text" placeholder="16.3067">
+                    </div>
+                    <div>
+                        <label style="display:block; font-weight:700; font-size:0.82rem; color:#334155; margin-bottom:4px;">Longitude (e.g. 80.4365):</label>
+                        <input type="number" step="any" id="loc-manual-lng" class="adm-input-text" placeholder="80.4365">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel 3: GMC Wards & Key Strategic Zones -->
+            <div id="panel-loc-wards" style="display:none; margin-bottom:1rem;">
+                <label style="display:block; font-weight:700; font-size:0.85rem; color:#334155; margin-bottom:4px;">
+                    Select Guntur Municipal Ward or Strategic Zone:
+                </label>
+                <select id="loc-ward-select" class="adm-input-text" style="width:100%; padding:8px; font-size:0.9rem;">
+                    <option value="">-- Choose GMC Municipal Ward / Key Zone --</option>
+                    <optgroup label="🏢 GMC Key Strategic Landmarks">
+                        <option value="16.3090,80.4380">🏛️ Guntur Municipal Corporation HQ</option>
+                        <option value="16.3032,80.4412">🏢 Guntur District Collectorate Office</option>
+                        <option value="16.3100,80.4300">🏥 Guntur Medical College & Hospital (GGH)</option>
+                        <option value="16.3050,80.4250">🚆 Guntur Railway Junction</option>
+                        <option value="16.3150,80.4320">🚌 APSRTC Central Bus Station (NTR Bus Stand)</option>
+                        <option value="16.3120,80.4400">🏪 Central Market Relief Unit</option>
+                        <option value="16.3080,80.4320">🚨 Emergency Response & Police HQ</option>
+                        <option value="16.3400,80.4800">🌊 Krishna River Western Flood Embankment</option>
+                    </optgroup>
+                    <optgroup label="🌐 Greater Regional Wards & Cities">
+                        <option value="16.2430,80.6400">🏙️ Tenali Municipal Zone (Ward 1)</option>
+                        <option value="16.4350,80.5500">🏙️ Mangalagiri Urban Zone</option>
+                        <option value="16.5130,80.5160">🏙️ Amaravati Capital Region</option>
+                        <option value="15.9042,80.4674">🌊 Bapatla Coastal Zone</option>
+                        <option value="16.0100,80.2900">🏙️ Narasaraopet Zone</option>
+                        <option value="16.0680,80.5500">🏙️ Ponnur Municipal Area</option>
+                        <option value="16.3950,80.1700">🏙️ Sattenapalle Urban Area</option>
+                        <option value="16.0500,80.1700">🏙️ Chilakaluripet Town Zone</option>
+                    </optgroup>
+                    <optgroup label="📍 Guntur Municipal Wards 1 to 57">
+                        <option value="16.3250,80.4200">Ward 1 — Kothapet / Old Guntur West</option>
+                        <option value="16.3300,80.4350">Ward 2 — Arundalpet North</option>
+                        <option value="16.3200,80.4400">Ward 3 — Broadpet Central</option>
+                        <option value="16.3150,80.4500">Ward 4 — Pattabhipuram South</option>
+                        <option value="16.3100,80.4600">Ward 5 — Gujjanagundla</option>
+                        <option value="16.3380,80.4250">Ward 6 — Gorantla Urban</option>
+                        <option value="16.3020,80.4150">Ward 7 — Nallapadu Sector</option>
+                        <option value="16.2950,80.4300">Ward 8 — Autonagar Industrial Zone</option>
+                        <option value="16.3280,80.4650">Ward 9 — Syamala Nagar</option>
+                        <option value="16.3080,80.4100">Ward 10 — Perecherla Road</option>
+                        <option value="16.3180,80.4280">Ward 11 to 20 — Inner Ring Road Belt</option>
+                        <option value="16.3350,80.4480">Ward 21 to 35 — Amaravati Road Belt</option>
+                        <option value="16.2900,80.4550">Ward 36 to 57 — Outer Municipal Limits</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <!-- Selected Coordinate Indicator -->
+            <div style="background:#f0fdf4; border:1px solid #86efac; border-radius:8px; padding:0.6rem 0.9rem; margin-bottom:1rem; font-size:0.85rem; color:#166534; display:flex; justify-content:space-between; align-items:center;">
+                <span>📍 Selected Pin Target: <b id="loc-target-coords-display">16.30670, 80.43650</b></span>
+                <span id="loc-target-name-display" style="color:#0369a1; font-weight:700; font-size:0.82rem;">Guntur Center</span>
+            </div>
+
+            <!-- 2. Disaster Category & Risk Level -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin-bottom:0.8rem;">
+                <div>
+                    <label style="display:block; font-weight:700; font-size:0.82rem; color:#334155; margin-bottom:4px;">Disaster Category:</label>
+                    <select id="modal-loc-disaster" class="adm-input-text">
+                        <option value="floods">🌧️ Floods</option>
+                        <option value="cyclones">🌀 Cyclones</option>
+                        <option value="tsunamis">🌊 Tsunamis</option>
+                        <option value="earthquakes">🏚️ Earthquakes</option>
+                        <option value="winds">💨 Severe Winds</option>
+                        <option value="rainfall">🌧️ Rainfall</option>
+                        <option value="landslides">⛰️ Landslides</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display:block; font-weight:700; font-size:0.82rem; color:#334155; margin-bottom:4px;">Risk Severity:</label>
+                    <select id="modal-loc-risk" class="adm-input-text">
+                        <option value="safe">🟢 Safe / Low Risk</option>
+                        <option value="moderate">🟡 Moderate Risk</option>
+                        <option value="danger" selected>🔴 High Risk / Inundation</option>
+                        <option value="severe">🟣 Critical / Evacuate</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 3. Title & Advisory Note -->
+            <div style="margin-bottom:0.8rem;">
+                <label style="display:block; font-weight:700; font-size:0.82rem; color:#334155; margin-bottom:4px;">Marker Title / Hazard Description:</label>
+                <input type="text" id="modal-loc-title" class="adm-input-text" placeholder="e.g. Tenali Flood Inundation Danger Zone" value="Flood Risk Inundation Marker">
+            </div>
+            <div style="margin-bottom:0.8rem;">
+                <label style="display:block; font-weight:700; font-size:0.82rem; color:#334155; margin-bottom:4px;">Citizen Advisory Guidance:</label>
+                <input type="text" id="modal-loc-advisory" class="adm-input-text" placeholder="e.g. Waterlogging depth > 2m. Emergency shelters active." value="Low-lying flood vulnerability area. Monitoring active.">
+            </div>
+        </div>
+
+        <div class="resolve-modal-footer">
+            <button type="button" id="btn-close-loc-modal-footer" class="btn-modal-cancel">Cancel</button>
+            <button type="button" id="btn-confirm-place-location" class="btn-modal-confirm" style="background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%); box-shadow:0 4px 12px rgba(2,132,199,0.3);">
+                📍 Place Marker at This Location
+            </button>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<style>
-    .table.table-striped {
-        border: 2px solid #333 !important;
-    }
-    .table.table-striped th, .table.table-striped td {
-        border: 1px solid #333 !important;
-    }
-</style>
 <script>
+let currentStream = null;
+let currentResolvingIssueId = null;
+let availableVideoDevices = [];
+let activeDeviceId = null;
+
+function openResolveModal(issueId, description, userName, phone, email, lat, lng, userRole) {
+    const modal = document.getElementById('resolve-modal-overlay');
+    if (!modal) return;
+
+    currentResolvingIssueId = issueId;
+    document.getElementById('modal-issue-id-input').value = issueId;
+    document.getElementById('modal-issue-subtitle').textContent = `Issue #${issueId} — Official Resolution & Multi-Channel Alert`;
+    
+    // Set editable citizen credentials
+    document.getElementById('modal-custom-name').value = userName || 'Citizen';
+    document.getElementById('modal-custom-phone').value = phone || '';
+    document.getElementById('modal-custom-email').value = email || '';
+
+    document.getElementById('modal-issue-coords').textContent = `${lat}, ${lng}`;
+    document.getElementById('modal-issue-desc').textContent = description || 'Civic issue report';
+
+    const badge = document.getElementById('modal-citizen-badge');
+    if (badge) {
+        if (userRole === 'admin') {
+            badge.textContent = 'ADMIN REPORT (NO ALERTS SENT TO ADMIN)';
+            badge.style.background = '#fee2e2';
+            badge.style.color = '#991b1b';
+        } else {
+            badge.textContent = 'CITIZEN RECIPIENT';
+            badge.style.background = '#dcfce7';
+            badge.style.color = '#166534';
+        }
+    }
+
+    document.getElementById('modal-admin-message').value =
+        `The reported issue has been inspected on-site by the municipal rapid response crew and successfully resolved & cleared.`;
+
+    // Reset photo & camera inputs
+    const fileInput = document.getElementById('admin-file-input');
+    const photoBase64 = document.getElementById('admin-photo-base64');
+    const previewWrap = document.getElementById('admin-photo-preview-wrap');
+    const submitBtn = document.getElementById('btn-submit-resolve');
+    const camError = document.getElementById('admin-camera-error');
+
+    if (fileInput) fileInput.value = '';
+    if (photoBase64) photoBase64.value = '';
+    if (previewWrap) previewWrap.style.display = 'none';
+    if (camError) camError.style.display = 'none';
+    if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Resolution & Dispatch All Alerts';
+    }
+    closeCameraBox();
+
+    // Set form action
+    document.getElementById('resolve-form').action = `/sendMessage`;
+    modal.style.display = 'flex';
+}
+
+function closeResolveModal() {
+    const modal = document.getElementById('resolve-modal-overlay');
+    if (modal) modal.style.display = 'none';
+    closeCameraBox();
+}
+
+function closeCameraBox() {
+    if (currentStream) {
+        try {
+            currentStream.getTracks().forEach(t => t.stop());
+        } catch(e){}
+        currentStream = null;
+    }
+    const box = document.getElementById('admin-camera-box');
+    if (box) box.style.display = 'none';
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    // 1. Delegated click handler for all "Resolve & Multi-Channel Alert" buttons
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn-trigger-resolve');
+        if (btn) {
+            e.preventDefault();
+            const d = btn.dataset;
+            openResolveModal(d.issueId, d.description, d.username, d.phone, d.email, d.latitude, d.longitude, d.userRole);
+        }
+    });
+
+    // Close Modal Listeners
+    const btnCloseX = document.getElementById('btn-close-modal-x');
+    const btnCloseFooter = document.getElementById('btn-close-modal-footer');
+    const modalOverlay = document.getElementById('resolve-modal-overlay');
+
+    if (btnCloseX) btnCloseX.addEventListener('click', closeResolveModal);
+    if (btnCloseFooter) btnCloseFooter.addEventListener('click', closeResolveModal);
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === modalOverlay) closeResolveModal();
+        });
+    }
+
+    // Success Modal Close
+    const successOverlay = document.getElementById('dispatch-success-overlay');
+    const btnCloseSuccess = document.getElementById('btn-close-dispatch-success');
+    if (btnCloseSuccess && successOverlay) {
+        btnCloseSuccess.addEventListener('click', () => {
+            successOverlay.style.display = 'none';
+        });
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeResolveModal();
+            if (successOverlay) successOverlay.style.display = 'none';
+        }
+    });
+
+    // 2. Camera Controls (Single 📷 Camera Button supporting Integrated Camera & Windows Virtual Camera)
+    const btnCamera = document.getElementById('admin-btn-camera');
+    const btnBrowse = document.getElementById('admin-btn-browse');
+    const fileInput = document.getElementById('admin-file-input');
+    const cameraBox = document.getElementById('admin-camera-box');
+    const videoEl = document.getElementById('admin-camera-video');
+    const cameraDeviceSelect = document.getElementById('admin-camera-device-select');
+    const btnSwitchCam = document.getElementById('admin-btn-switch-cam');
+    const btnCapture = document.getElementById('admin-btn-capture');
+    const btnCancelCam = document.getElementById('admin-btn-cancel-cam');
+    const previewWrap = document.getElementById('admin-photo-preview-wrap');
+    const previewImg = document.getElementById('admin-photo-preview-img');
+    const photoBase64Input = document.getElementById('admin-photo-base64');
+    const btnRemovePhoto = document.getElementById('admin-btn-remove-photo');
+    const camError = document.getElementById('admin-camera-error');
+
+    // A) Enumerate all available camera devices (Integrated Camera, Windows Virtual Camera, etc.)
+    async function enumerateCameras() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+        try {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            availableVideoDevices = devices.filter(d => d.kind === 'videoinput');
+
+            if (cameraDeviceSelect) {
+                cameraDeviceSelect.innerHTML = '';
+                if (availableVideoDevices.length > 0) {
+                    availableVideoDevices.forEach((dev, index) => {
+                        const opt = document.createElement('option');
+                        opt.value = dev.deviceId;
+                        opt.textContent = dev.label || `Camera ${index + 1}`;
+                        cameraDeviceSelect.appendChild(opt);
+                    });
+                    cameraDeviceSelect.style.display = 'inline-block';
+                    if (activeDeviceId) {
+                        cameraDeviceSelect.value = activeDeviceId;
+                    }
+                } else {
+                    cameraDeviceSelect.style.display = 'none';
+                }
+            }
+        } catch (e) {
+            console.warn('Could not enumerate cameras:', e);
+        }
+    }
+
+    // B) Start Camera Stream with Device Selection
+    async function startCamera(deviceId = null) {
+        closeCameraBox();
+        if (camError) camError.style.display = 'none';
+
+        try {
+            const constraintsList = [];
+            if (deviceId) {
+                constraintsList.push({ video: { deviceId: { exact: deviceId } }, audio: false });
+                constraintsList.push({ video: { deviceId: deviceId }, audio: false });
+            }
+            constraintsList.push({ video: true, audio: false });
+            constraintsList.push({ video: { facingMode: 'user' }, audio: false });
+
+            let stream = null;
+            let lastErr = null;
+            for (const c of constraintsList) {
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia(c);
+                    break;
+                } catch (err) {
+                    lastErr = err;
+                    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') throw err;
+                }
+            }
+
+            if (!stream) throw lastErr || new Error('Could not open camera');
+
+            currentStream = stream;
+            activeDeviceId = deviceId || (stream.getVideoTracks()[0] && stream.getVideoTracks()[0].getSettings().deviceId);
+            videoEl.srcObject = stream;
+            videoEl.classList.add('mirror');
+            cameraBox.style.display = 'block';
+
+            await enumerateCameras();
+            if (cameraDeviceSelect && activeDeviceId) {
+                cameraDeviceSelect.value = activeDeviceId;
+            }
+
+        } catch (err) {
+            console.error('Camera access error:', err);
+            let msg = 'Could not access camera.';
+            const isLocal = window.location.hostname === 'localhost' || window.location.protocol === 'https:';
+
+            if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                msg = '⚠️ Camera permission was denied. Please allow camera in your browser URL bar, or click "Choose from Photos / Gallery" below.';
+            } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+                msg = '⚠️ No webcam stream found. Please connect a webcam or upload a photo.';
+            } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+                msg = '⚠️ Camera is already in use by another app. Please close other camera apps and retry.';
+            } else if (window.isSecureContext === false || !isLocal) {
+                msg = `⚠️ Live streaming requires http://localhost:5000 or HTTPS. <br><button type="button" onclick="const p=window.location.port?':'+window.location.port:''; window.location.href='http://localhost'+p+window.location.pathname;" style="margin-top:6px; background:#0284c7; color:white; border:none; padding:4px 10px; border-radius:4px; font-weight:700; cursor:pointer;">🌐 Switch to http://localhost:5000</button> or click Choose File.`;
+            } else {
+                msg = `⚠️ Camera notice: ${err.message || err.name}. You can also choose a photo file directly.`;
+            }
+
+            if (camError) {
+                camError.innerHTML = msg;
+                camError.style.display = 'block';
+            } else {
+                alert(msg);
+            }
+        }
+    }
+
+    // C) Camera button click triggers live viewfinder
+    if (btnCamera) {
+        btnCamera.addEventListener('click', function(e) {
+            e.preventDefault();
+            startCamera(null);
+        });
+    }
+
+    // D) Switch camera dropdown change handler
+    if (cameraDeviceSelect) {
+        cameraDeviceSelect.addEventListener('change', function() {
+            startCamera(this.value);
+        });
+    }
+
+    // E) Switch camera toggle button
+    if (btnSwitchCam) {
+        btnSwitchCam.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (availableVideoDevices.length > 1) {
+                const currentIndex = availableVideoDevices.findIndex(d => d.deviceId === activeDeviceId);
+                const nextIndex = (currentIndex + 1) % availableVideoDevices.length;
+                const nextDevice = availableVideoDevices[nextIndex];
+                startCamera(nextDevice.deviceId);
+            } else {
+                startCamera(null);
+            }
+        });
+    }
+
+    // F) File Upload Handler
+    if (btnBrowse && fileInput) {
+        btnBrowse.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    previewImg.src = evt.target.result;
+                    document.getElementById('admin-photo-name').textContent = file.name;
+                    previewWrap.style.display = 'flex';
+                    photoBase64Input.value = '';
+                    if (camError) camError.style.display = 'none';
+                    closeCameraBox();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // G) Capture Snapshot
+    if (btnCapture && videoEl) {
+        btnCapture.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (!videoEl.videoWidth || videoEl.videoWidth === 0) {
+                alert('Camera stream is still initializing. Please wait a moment and try again.');
+                return;
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = videoEl.videoWidth;
+            canvas.height = videoEl.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+            photoBase64Input.value = dataUrl;
+            previewImg.src = dataUrl;
+            document.getElementById('admin-photo-name').textContent = '📷 Camera Snapshot Attached';
+            previewWrap.style.display = 'flex';
+
+            if (fileInput) fileInput.value = '';
+            if (camError) camError.style.display = 'none';
+            closeCameraBox();
+        });
+    }
+
+    if (btnCancelCam) {
+        btnCancelCam.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeCameraBox();
+        });
+    }
+
+    if (btnRemovePhoto) {
+        btnRemovePhoto.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (fileInput) fileInput.value = '';
+            if (photoBase64Input) photoBase64Input.value = '';
+            previewWrap.style.display = 'none';
+        });
+    }
+
+    // 3. Message / Issue Resolution Form Submission (Multi-Channel Dispatch with Instant WhatsApp Auto-Trigger)
+    const resolveForm = document.getElementById('resolve-form');
+    const submitBtn = document.getElementById('btn-submit-resolve');
+
+    if (resolveForm && submitBtn) {
+        resolveForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Dispatching Alerts (SMS, Email, WhatsApp)...';
+
+            const phoneVal = (document.getElementById('modal-custom-phone').value || '').trim();
+            const emailVal = (document.getElementById('modal-custom-email').value || '').trim();
+
+            // Pre-open blank tab for WhatsApp to bypass browser popup blockers
+            let waTab = null;
+            if (phoneVal) {
+                try {
+                    waTab = window.open('about:blank', '_blank');
+                } catch(e) {
+                    console.warn('Popup blocker notice:', e);
+                }
+            }
+
+            const formData = new FormData(resolveForm);
+            if (!formData.get('issue_id') && currentResolvingIssueId) {
+                formData.set('issue_id', currentResolvingIssueId);
+            }
+
+            try {
+                const response = await fetch('/sendMessage', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({ message: `HTTP ${response.status}` }));
+                    if (waTab) waTab.close();
+                    throw new Error(errData.message || `Request failed with status ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data && data.status === 'success') {
+                    // Redirect pre-opened WhatsApp tab if URL exists
+                    if (data.whatsapp_url && waTab) {
+                        try {
+                            waTab.location.href = data.whatsapp_url;
+                        } catch(e) {
+                            console.warn('Could not redirect tab:', e);
+                        }
+                    } else if (waTab) {
+                        waTab.close();
+                    }
+
+                    // Close resolve modal
+                    closeResolveModal();
+
+                    // Remove resolved issue row from the table
+                    const resolvedRow = document.getElementById(`issue-row-${currentResolvingIssueId}`);
+                    if (resolvedRow) {
+                        resolvedRow.style.transition = 'all 0.4s ease';
+                        resolvedRow.style.opacity = '0';
+                        resolvedRow.style.transform = 'scale(0.95)';
+                        setTimeout(() => {
+                            resolvedRow.remove();
+                            const remaining = document.querySelectorAll('#issues-tbody tr[id^="issue-row-"]').length;
+                            const countEl = document.getElementById('issue-count');
+                            if (countEl) countEl.textContent = remaining;
+                            if (remaining === 0) {
+                                const tbody = document.getElementById('issues-tbody');
+                                if (tbody) {
+                                    tbody.innerHTML = `<tr><td colspan="8" style="padding:2.5rem; text-align:center; color:#64748b; font-size:1.05rem;">🎉 No pending issues! All civic reports have been inspected and cleared.</td></tr>`;
+                                }
+                            }
+                        }, 400);
+                    }
+
+                    // Show Direct WhatsApp & SMS Dispatch Modal
+                    const successModal = document.getElementById('dispatch-success-overlay');
+                    const waBtn = document.getElementById('dispatch-wa-btn');
+                    const smsBtn = document.getElementById('dispatch-sms-btn');
+                    const successText = document.getElementById('dispatch-success-text');
+                    const emailBadge = document.getElementById('status-email-badge');
+                    const smsBadge = document.getElementById('status-sms-badge');
+                    const waBadge = document.getElementById('status-wa-badge');
+
+                    if (successModal) {
+                        let infoMsg = `Issue #${currentResolvingIssueId} has been successfully CLEARED & RESOLVED in the municipal system.`;
+
+                        if (data.recipient_email) {
+                            emailBadge.innerHTML = `<i class="fas fa-check-circle" style="color:#22c55e;"></i> Email: Dispatched to <b>${data.recipient_email}</b> via Gmail SMTP`;
+                            emailBadge.style.display = 'block';
+                        } else {
+                            emailBadge.innerHTML = `<i class="fas fa-info-circle" style="color:#94a3b8;"></i> Email: No citizen email provided`;
+                        }
+
+                        if (data.recipient_phone) {
+                            smsBadge.innerHTML = `<i class="fas fa-check-circle" style="color:#0284c7;"></i> SMS: Processed for <b>+91 ${data.recipient_phone}</b>`;
+                            smsBadge.style.display = 'block';
+                        } else {
+                            smsBadge.innerHTML = `<i class="fas fa-info-circle" style="color:#94a3b8;"></i> SMS: No mobile number provided`;
+                        }
+
+                        if (data.whatsapp_url) {
+                            waBtn.href = data.whatsapp_url;
+                            waBtn.style.display = 'flex';
+                            waBadge.innerHTML = `<i class="fab fa-whatsapp" style="color:#22c55e;"></i> WhatsApp: Official pre-filled alert opened for <b>+91 ${data.recipient_phone}</b>`;
+                        } else {
+                            waBtn.style.display = 'none';
+                            waBadge.innerHTML = `<i class="fas fa-info-circle" style="color:#94a3b8;"></i> WhatsApp: No mobile number provided`;
+                        }
+
+                        if (data.sms_link) {
+                            smsBtn.href = data.sms_link;
+                            smsBtn.style.display = 'flex';
+                        } else {
+                            smsBtn.style.display = 'none';
+                        }
+
+                        if (successText) successText.textContent = infoMsg;
+                        successModal.style.display = 'flex';
+                    }
+
+                } else {
+                    if (waTab) waTab.close();
+                    throw new Error((data && data.message) ? data.message : 'Unknown server response');
+                }
+
+            } catch (err) {
+                console.error('Resolution dispatch error:', err);
+                alert(`⚠️ Error dispatching resolution: ${err.message}\nPlease try again.`);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Resolution & Dispatch All Alerts';
+            }
+        });
+    }
+
+    // 4. Leaflet Admin Map Initialization
     if (!window.L || !document.getElementById('admin-map')) return;
 
     const issues = {{ issues_json|tojson|safe }};
@@ -102,42 +1547,860 @@ document.addEventListener('DOMContentLoaded', function() {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
+    // Initialize Universal Location Search for Admin Map
+    if (window.initLeafletSearch) {
+        window.initLeafletSearch(map, {
+            mountSelector: '#admin-map-search-container',
+            placeholder: '🔍 Search any city, area, ward, street, landmark, or lat,lng...'
+        });
+    }
+
     issues.forEach(function(issue) {
         const marker = L.marker([issue.latitude, issue.longitude]).addTo(map);
         const username = issue.user && issue.user.username ? issue.user.username : 'Unknown';
-        let popupContent = `<b>${issue.description}</b><br>Status: ${issue.status}<br>Reported by: ${username}`;
-        if (isAdmin || issue.user_id === currentUserId) {
-            popupContent += `<br><form method="post" action="/clear_issue/${issue.id}" style="margin-block-start:8px;"><button type="submit" style="background:#2e7d32;color:white;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;font-weight:600;">Clear Issue (Email & SMS)</button></form>`;
+        const userRole = issue.user && issue.user.role ? issue.user.role : 'user';
+        const descSafe = (issue.description || '').replace(/"/g, '&quot;');
+        const phoneSafe = (issue.user && issue.user.phone) ? issue.user.phone : '';
+        const emailSafe = (issue.user && issue.user.email) ? issue.user.email : '';
+
+        let popupContent = `<div style="font-family:sans-serif;min-width:220px;">`;
+        popupContent += `<b>Issue #${issue.id}: ${descSafe}</b><br><small style="color:#666;">Status: ${issue.status} • By: ${username}</small>`;
+        if (issue.image_url) {
+            popupContent += `<div style="margin-top:6px;"><a href="/static/${issue.image_url}" target="_blank"><img src="/static/${issue.image_url}" style="width:100%;max-width:180px;height:90px;object-fit:cover;border-radius:6px;display:block;"></a></div>`;
         }
+        if (isAdmin || issue.user_id === currentUserId) {
+            popupContent += `<div style="margin-top:8px;">
+                <button type="button" class="btn-trigger-resolve" style="background:#16a34a;color:white;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:700;font-size:0.82rem;width:100%;"
+                    data-issue-id="${issue.id}"
+                    data-description="${descSafe}"
+                    data-username="${username}"
+                    data-phone="${phoneSafe}"
+                    data-email="${emailSafe}"
+                    data-user-role="${userRole}"
+                    data-latitude="${issue.latitude}"
+                    data-longitude="${issue.longitude}">
+                    🚀 Resolve & Multi-Channel Alert
+                </button>
+            </div>`;
+        }
+        popupContent += `</div>`;
         marker.bindPopup(popupContent);
     });
 
-    // Render saved zone markings on admin map
-    fetch('/api/markings')
-      .then(res => res.json())
-      .then(data => {
-        if (data.status === 'success' && Array.isArray(data.markings)) {
-          const HEX_MAP = { safe: '#2e7d32', moderate: '#f9a825', danger: '#d32f2f', green: '#2e7d32', yellow: '#f9a825', red: '#d32f2f' };
-          data.markings.forEach(m => {
-            const hex = HEX_MAP[m.color] || HEX_MAP[m.risk_level] || '#2e7d32';
+    // =========================================================================
+    // 5. MULTI-HAZARD DISASTER ADMIN MARKING & INTERACTIVE GIS SYSTEM
+    // =========================================================================
+    const DISASTER_META = {
+        floods: { name: 'Floods', icon: '🌧️', color: '#0284c7', defaultTitle: 'Flood Risk Inundation Zone', defaultAdvisory: 'Low-lying flood vulnerability area. Water level monitoring active.' },
+        cyclones: { name: 'Cyclones', icon: '🌀', color: '#ea580c', defaultTitle: 'Cyclone & Storm Surge Warning Zone', defaultAdvisory: 'Severe coastal winds & storm surge danger. Relocate to elevated cyclone shelters.' },
+        tsunamis: { name: 'Tsunamis', icon: '🌊', color: '#0891b2', defaultTitle: 'Tsunami Coastal Inundation Line', defaultAdvisory: 'Immediate coastal evacuation zone. Move inland beyond high-ground boundary.' },
+        earthquakes: { name: 'Earthquakes', icon: '🏚️', color: '#9333ea', defaultTitle: 'Earthquake Fault / High Seismic Risk', defaultAdvisory: 'High seismic vulnerability zone. Inspect unreinforced buildings.' },
+        winds: { name: 'Severe Winds', icon: '💨', color: '#0d9488', defaultTitle: 'Gale-Force Wind Hazard Zone', defaultAdvisory: 'Extreme wind gusts > 80 km/h. Danger of falling trees and powerlines.' },
+        rainfall: { name: 'Rainfall', icon: '🌧️', color: '#2563eb', defaultTitle: 'Heavy Rainfall & Cloudburst Alert', defaultAdvisory: 'Intense precipitation warning. Avoid subways, underpasses, and drains.' },
+        landslides: { name: 'Landslides', icon: '⛰️', color: '#b45309', defaultTitle: 'Landslide & Slope Instability Risk', defaultAdvisory: 'Unstable hillside slope. Debris flow hazard during heavy rains.' }
+    };
+
+    const HEX_MAP = {
+        safe: '#16a34a',
+        moderate: '#d97706',
+        danger: '#dc2626',
+        severe: '#7c3aed',
+        green: '#16a34a',
+        yellow: '#d97706',
+        red: '#dc2626',
+        purple: '#7c3aed'
+    };
+
+    function normalizeDisasterType(raw) {
+        if (!raw) return 'floods';
+        const clean = String(raw).trim().toLowerCase();
+        if (clean === 'all') return 'all';
+        const map = {
+            'cyclone': 'cyclones', 'cyclones': 'cyclones',
+            'flood': 'floods', 'floods': 'floods',
+            'tsunami': 'tsunamis', 'tsunamis': 'tsunamis',
+            'earthquake': 'earthquakes', 'earthquakes': 'earthquakes',
+            'wind': 'winds', 'winds': 'winds',
+            'rainfall': 'rainfall', 'rain': 'rainfall', 'rainfalls': 'rainfall',
+            'landslide': 'landslides', 'landslides': 'landslides'
+        };
+        if (map[clean]) return map[clean];
+        if (clean.includes('cyclon')) return 'cyclones';
+        if (clean.includes('tsunam')) return 'tsunamis';
+        if (clean.includes('earthquak')) return 'earthquakes';
+        if (clean.includes('wind')) return 'winds';
+        if (clean.includes('rain')) return 'rainfall';
+        if (clean.includes('landslid')) return 'landslides';
+        if (clean.includes('flood')) return 'floods';
+        return 'floods';
+    }
+
+    let activeDisaster = 'floods';
+    let activeTool = 'marker';
+    let activeRisk = 'safe';
+    let activeColor = 'green';
+    let activeHex = '#16a34a';
+
+    const savedDisasterGroup = L.featureGroup().addTo(map);
+    const draftDisasterGroup = L.featureGroup().addTo(map);
+
+    let unsavedDisasterMarkings = [];
+    let serverDisasterMarkings = [];
+    let isDrawing = false;
+    let drawStartLatLng = null;
+    let activeDraftLayer = null;
+    let pencilPoints = [];
+    let polyPoints = [];
+    let polyPreview = null;
+
+    function getDisasterMarkerIcon(disasterType, hexColor) {
+        const normType = normalizeDisasterType(disasterType);
+        const meta = DISASTER_META[normType] || { icon: '⚠️', name: 'Hazard' };
+        return L.divIcon({
+            className: 'admin-disaster-div-icon',
+            html: `
+                <div style="
+                    width: 36px;
+                    height: 36px;
+                    background: #ffffff;
+                    border: 3px solid ${hexColor};
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+                    font-size: 18px;
+                    cursor: pointer;
+                    transform: translate(-50%, -50%);
+                ">
+                    ${meta.icon}
+                </div>
+            `,
+            iconSize: [36, 36],
+            iconAnchor: [18, 18],
+            popupAnchor: [0, -20]
+        });
+    }
+
+    function updateAdminStatus() {
+        const statusEl = document.getElementById('adm-status-msg');
+        const draftCountEl = document.getElementById('adm-draft-count');
+        if (draftCountEl) draftCountEl.textContent = unsavedDisasterMarkings.length;
+        if (!statusEl) return;
+
+        const normActive = normalizeDisasterType(activeDisaster);
+        const dMeta = DISASTER_META[normActive] || { name: 'All Hazards', icon: '🌐' };
+        let toolDesc = '';
+        switch (activeTool) {
+            case 'marker': toolDesc = 'Click on map to place indicator pin.'; break;
+            case 'circle': toolDesc = 'Click & drag on map to expand danger circle.'; break;
+            case 'pencil': toolDesc = 'Click & drag cursor to draw freehand hazard boundary.'; break;
+            case 'rectangle': toolDesc = 'Click & drag to draw sector box.'; break;
+            case 'polygon': toolDesc = 'Click sequential points on map to build polygon (double-click to finish).'; break;
+            case 'eraser': toolDesc = 'Click any shape or marker to remove it.'; break;
+        }
+
+        statusEl.innerHTML = `Category: <strong>${dMeta.icon} ${dMeta.name}</strong> | Tool: <strong>${activeTool.toUpperCase()}</strong> | Risk: <strong style="color:${activeHex};">${activeRisk.toUpperCase()}</strong>. ${toolDesc}`;
+    }
+
+    function switchAdminDisasterCategory(target) {
+        activeDisaster = normalizeDisasterType(target);
+
+        // Sync tab buttons
+        document.querySelectorAll('#admin-disaster-tabs .disaster-tab-btn').forEach(b => {
+            const bDis = normalizeDisasterType(b.getAttribute('data-disaster'));
+            if (bDis === activeDisaster) {
+                b.classList.add('active');
+            } else {
+                b.classList.remove('active');
+            }
+        });
+
+        // Sync select dropdown
+        const sel = document.getElementById('adm-disaster-select');
+        if (sel && sel.value !== activeDisaster) {
+            sel.value = activeDisaster;
+        }
+
+        // Sync title and advisory inputs
+        const titleInput = document.getElementById('adm-marker-title');
+        const advInput = document.getElementById('adm-marker-advisory');
+        if (activeDisaster !== 'all' && DISASTER_META[activeDisaster]) {
+            const meta = DISASTER_META[activeDisaster];
+            if (titleInput) {
+                titleInput.value = `${meta.name} Risk Zone (${activeTool.toUpperCase()})`;
+            }
+            if (advInput) {
+                advInput.value = meta.defaultAdvisory;
+            }
+        }
+
+        renderDisasterMarkings();
+        updateAdminStatus();
+    }
+
+    // Tab Switching for Disaster Categories
+    document.querySelectorAll('#admin-disaster-tabs .disaster-tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const chosen = this.getAttribute('data-disaster');
+            switchAdminDisasterCategory(chosen);
+        });
+    });
+
+    // Dropdown Selection for Disaster Categories
+    const adminDisasterSelect = document.getElementById('adm-disaster-select');
+    if (adminDisasterSelect) {
+        adminDisasterSelect.addEventListener('change', function() {
+            switchAdminDisasterCategory(this.value);
+        });
+    }
+
+    // Tool Buttons Switching
+    document.querySelectorAll('#admin-tool-buttons .adm-tool-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('#admin-tool-buttons .adm-tool-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            activeTool = this.getAttribute('data-tool');
+
+            if (polyPreview) {
+                draftDisasterGroup.removeLayer(polyPreview);
+                polyPreview = null;
+            }
+            polyPoints = [];
+
+            const titleInput = document.getElementById('adm-marker-title');
+            const normD = normalizeDisasterType(activeDisaster);
+            if (titleInput && normD !== 'all' && DISASTER_META[normD]) {
+                titleInput.value = `${DISASTER_META[normD].name} Risk Zone (${activeTool.toUpperCase()})`;
+            }
+
+            updateAdminStatus();
+        });
+    });
+
+    // Risk Severity Buttons
+    document.querySelectorAll('#admin-risk-buttons .adm-risk-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('#admin-risk-buttons .adm-risk-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            activeRisk = this.getAttribute('data-risk');
+            activeColor = this.getAttribute('data-color');
+            activeHex = this.getAttribute('data-hex');
+            updateAdminStatus();
+        });
+    });
+
+    // =========================================================================
+    // 5.1 MOBILE & DESKTOP PLACE MARKER AT ANY LOCATION CONTROLLER
+    // =========================================================================
+    let targetLocLatLng = [16.3067, 80.4365];
+    let targetLocName = 'Guntur Municipal Center';
+
+    const locModal = document.getElementById('admin-location-modal');
+    const btnOpenLocPicker = document.getElementById('adm-btn-open-location-picker');
+    const btnCloseLocX = document.getElementById('btn-close-loc-modal-x');
+    const btnCloseLocFooter = document.getElementById('btn-close-loc-modal-footer');
+    const btnConfirmPlace = document.getElementById('btn-confirm-place-location');
+
+    function openLocationModal() {
+        if (locModal) {
+            locModal.style.display = 'flex';
+            // Sync active disaster in modal
+            const mDisSelect = document.getElementById('modal-loc-disaster');
+            if (mDisSelect) mDisSelect.value = (activeDisaster === 'all') ? 'floods' : activeDisaster;
+            const mRiskSelect = document.getElementById('modal-loc-risk');
+            if (mRiskSelect) mRiskSelect.value = activeRisk;
+        }
+    }
+
+    function closeLocationModal() {
+        if (locModal) locModal.style.display = 'none';
+    }
+
+    if (btnOpenLocPicker) btnOpenLocPicker.addEventListener('click', openLocationModal);
+    if (btnCloseLocX) btnCloseLocX.addEventListener('click', closeLocationModal);
+    if (btnCloseLocFooter) btnCloseLocFooter.addEventListener('click', closeLocationModal);
+    if (locModal) {
+        locModal.addEventListener('click', function(e) {
+            if (e.target === locModal) closeLocationModal();
+        });
+    }
+
+    // Modal Tabs Switching
+    const tabSearch = document.getElementById('tab-loc-search');
+    const tabCoords = document.getElementById('tab-loc-coords');
+    const tabWards = document.getElementById('tab-loc-wards');
+    const tabGps = document.getElementById('tab-loc-gps');
+    const panelSearch = document.getElementById('panel-loc-search');
+    const panelCoords = document.getElementById('panel-loc-coords');
+    const panelWards = document.getElementById('panel-loc-wards');
+
+    function switchLocTab(activeTab, showPanel) {
+        [tabSearch, tabCoords, tabWards, tabGps].forEach(t => t && t.classList.remove('active'));
+        [panelSearch, panelCoords, panelWards].forEach(p => p && (p.style.display = 'none'));
+        if (activeTab) activeTab.classList.add('active');
+        if (showPanel) showPanel.style.display = 'block';
+    }
+
+    if (tabSearch) tabSearch.addEventListener('click', () => switchLocTab(tabSearch, panelSearch));
+    if (tabCoords) tabCoords.addEventListener('click', () => switchLocTab(tabCoords, panelCoords));
+    if (tabWards) tabWards.addEventListener('click', () => switchLocTab(tabWards, panelWards));
+
+    function updateTargetCoordDisplay(lat, lng, name) {
+        targetLocLatLng = [parseFloat(lat), parseFloat(lng)];
+        targetLocName = name || `${parseFloat(lat).toFixed(5)}, ${parseFloat(lng).toFixed(5)}`;
+        const dispCoords = document.getElementById('loc-target-coords-display');
+        const dispName = document.getElementById('loc-target-name-display');
+        if (dispCoords) dispCoords.textContent = `${parseFloat(lat).toFixed(5)}, ${parseFloat(lng).toFixed(5)}`;
+        if (dispName) dispName.textContent = targetLocName;
+    }
+
+    // Tab 1: Nominatim Search
+    const btnDoSearch = document.getElementById('btn-do-loc-search');
+    const inputSearch = document.getElementById('loc-search-query');
+    const listResults = document.getElementById('loc-search-results-list');
+
+    async function performModalLocationSearch() {
+        const query = (inputSearch.value || '').trim();
+        if (!query) return;
+        btnDoSearch.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        try {
+            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=6`;
+            const res = await fetch(url, { headers: { 'Accept-Language': 'en' } });
+            const data = await res.json();
+            btnDoSearch.innerHTML = '🔍 Find';
+            listResults.innerHTML = '';
+            if (data && data.length > 0) {
+                data.forEach(item => {
+                    const div = document.createElement('div');
+                    div.style.cssText = 'padding:8px 12px; border-bottom:1px solid #f1f5f9; cursor:pointer; font-size:0.86rem;';
+                    div.innerHTML = `<strong>📍 ${item.display_name.split(',')[0]}</strong><br><small style="color:#64748b;">${item.display_name}</small>`;
+                    div.addEventListener('click', () => {
+                        updateTargetCoordDisplay(item.lat, item.lon, item.display_name.split(',')[0]);
+                        listResults.style.display = 'none';
+                        const titleInp = document.getElementById('modal-loc-title');
+                        if (titleInp) titleInp.value = `${item.display_name.split(',')[0]} Hazard Risk Zone`;
+                    });
+                    listResults.appendChild(div);
+                });
+                listResults.style.display = 'block';
+            } else {
+                listResults.innerHTML = '<div style="padding:10px; color:#64748b; font-size:0.85rem; text-align:center;">No locations found. Try different keywords.</div>';
+                listResults.style.display = 'block';
+            }
+        } catch(e) {
+            console.warn(e);
+            btnDoSearch.innerHTML = '🔍 Find';
+        }
+    }
+
+    if (btnDoSearch) btnDoSearch.addEventListener('click', performModalLocationSearch);
+    if (inputSearch) inputSearch.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); performModalLocationSearch(); } });
+
+    // Tab 2: Manual Coordinates Input
+    const latInp = document.getElementById('loc-manual-lat');
+    const lngInp = document.getElementById('loc-manual-lng');
+    function syncManualCoords() {
+        const lat = parseFloat(latInp.value);
+        const lng = parseFloat(lngInp.value);
+        if (!isNaN(lat) && !isNaN(lng)) {
+            updateTargetCoordDisplay(lat, lng, 'Custom Coordinates');
+        }
+    }
+    if (latInp) latInp.addEventListener('input', syncManualCoords);
+    if (lngInp) lngInp.addEventListener('input', syncManualCoords);
+
+    // Tab 3: GMC Wards Dropdown
+    const wardSelect = document.getElementById('loc-ward-select');
+    if (wardSelect) {
+        wardSelect.addEventListener('change', function() {
+            if (this.value) {
+                const parts = this.value.split(',');
+                const label = this.options[this.selectedIndex].text;
+                updateTargetCoordDisplay(parts[0], parts[1], label);
+                const titleInp = document.getElementById('modal-loc-title');
+                if (titleInp) titleInp.value = `${label} Risk Zone`;
+            }
+        });
+    }
+
+    // Tab 4: GPS My Location
+    if (tabGps) {
+        tabGps.addEventListener('click', function() {
+            switchLocTab(tabGps, null);
+            if (!navigator.geolocation) {
+                alert('Geolocation is not supported by your browser.');
+                return;
+            }
+            tabGps.innerHTML = '⏳ Locating GPS...';
+            navigator.geolocation.getCurrentPosition(function(pos) {
+                tabGps.innerHTML = '📌 GPS Location';
+                updateTargetCoordDisplay(pos.coords.latitude, pos.coords.longitude, 'Current GPS Location');
+                const titleInp = document.getElementById('modal-loc-title');
+                if (titleInp) titleInp.value = `GPS On-Site Hazard Zone`;
+            }, function(err) {
+                tabGps.innerHTML = '📌 GPS Location';
+                alert(`GPS Location error: ${err.message}`);
+            }, { enableHighAccuracy: true, timeout: 8000 });
+        });
+    }
+
+    // Place Location Confirm Action
+    if (btnConfirmPlace) {
+        btnConfirmPlace.addEventListener('click', function() {
+            const dType = normalizeDisasterType(document.getElementById('modal-loc-disaster').value || 'floods');
+            const riskVal = document.getElementById('modal-loc-risk').value || 'danger';
+            const hexColor = HEX_MAP[riskVal] || '#dc2626';
+            const titleVal = (document.getElementById('modal-loc-title').value || `${DISASTER_META[dType]?.name || 'Hazard'} Risk Zone`).trim();
+            const advVal = (document.getElementById('modal-loc-advisory').value || 'Official municipal hazard advisory active.').trim();
+
+            const latlng = L.latLng(targetLocLatLng[0], targetLocLatLng[1]);
+            const markerLayer = L.marker(latlng, {
+                icon: getDisasterMarkerIcon(dType, hexColor)
+            }).addTo(draftDisasterGroup);
+
+            const geoData = {
+                type: 'Point',
+                coordinates: [latlng.lng, latlng.lat],
+                center: [latlng.lat, latlng.lng]
+            };
+
+            const item = {
+                disaster_type: dType,
+                title: titleVal,
+                description: advVal,
+                risk_level: riskVal,
+                color: riskVal,
+                shape_type: 'marker',
+                geojson_data: geoData,
+                layer: markerLayer
+            };
+
+            const dMeta = DISASTER_META[dType] || { name: 'Floods', icon: '🌧️' };
+            markerLayer.bindPopup(`
+                <div style="font-family:sans-serif;min-width:180px;">
+                    <div style="font-size:1.1em;font-weight:bold;color:#0f172a;display:flex;align-items:center;gap:4px;">
+                        ${dMeta.icon} ${titleVal} <span style="font-size:0.75em;color:#e65100;">[Draft]</span>
+                    </div>
+                    <div style="background:${hexColor};color:white;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:bold;display:inline-block;margin:6px 0;">
+                        ${riskVal.toUpperCase()} • ${dMeta.name}
+                    </div>
+                    ${advVal ? `<div style="font-size:12px;color:#334155;margin-bottom:6px;line-height:1.4;">${advVal}</div>` : ''}
+                    <div style="color:#e65100;font-size:11px;font-weight:600;">⚠️ Click "Save Markings to Database" to commit</div>
+                </div>
+            `);
+
+            markerLayer.on('click', function(e) {
+                if (activeTool === 'eraser') {
+                    L.DomEvent.stopPropagation(e);
+                    draftDisasterGroup.removeLayer(markerLayer);
+                    unsavedDisasterMarkings = unsavedDisasterMarkings.filter(m => m.layer !== markerLayer);
+                    updateAdminStatus();
+                }
+            });
+
+            unsavedDisasterMarkings.push(item);
+            map.flyTo(latlng, Math.max(map.getZoom(), 15), { animate: true, duration: 1.2 });
+            markerLayer.openPopup();
+            closeLocationModal();
+            updateAdminStatus();
+        });
+    }
+
+    // Mobile Polygon Finish Button Handler
+    const polyBar = document.getElementById('adm-polygon-controls-bar');
+    const polyCountEl = document.getElementById('adm-poly-point-count');
+    const btnFinishPoly = document.getElementById('adm-finish-poly-btn');
+
+    function updatePolyUi() {
+        if (polyBar) {
+            if (activeTool === 'polygon') {
+                polyBar.style.display = 'flex';
+                if (polyCountEl) polyCountEl.textContent = polyPoints.length;
+            } else {
+                polyBar.style.display = 'none';
+            }
+        }
+    }
+
+    if (btnFinishPoly) {
+        btnFinishPoly.addEventListener('click', function() {
+            if (polyPoints.length >= 3 && polyPreview) {
+                addDisasterDraftItem('polygon', polyPreview.toGeoJSON(), polyPreview);
+                polyPreview = null;
+                polyPoints = [];
+                updatePolyUi();
+            } else {
+                alert('Please tap at least 3 points on the map to create a polygon area.');
+            }
+        });
+    }
+
+    // Map Drawing Event Handlers on #admin-map (Mouse & Touch Events)
+    map.on('mousedown', function(e) {
+        if (activeTool === 'eraser' || activeTool === 'marker' || activeTool === 'polygon') return;
+        isDrawing = true;
+        drawStartLatLng = e.latlng;
+
+        if (activeTool === 'pencil') {
+            map.dragging.disable();
+            pencilPoints = [e.latlng];
+            activeDraftLayer = L.polyline(pencilPoints, { color: activeHex, weight: 5, opacity: 0.85 }).addTo(draftDisasterGroup);
+        } else if (activeTool === 'circle') {
+            map.dragging.disable();
+            activeDraftLayer = L.circle(drawStartLatLng, { radius: 1, color: activeHex, fillColor: activeHex, fillOpacity: 0.4, weight: 2 }).addTo(draftDisasterGroup);
+        } else if (activeTool === 'rectangle') {
+            map.dragging.disable();
+            activeDraftLayer = L.rectangle([drawStartLatLng, drawStartLatLng], { color: activeHex, fillColor: activeHex, fillOpacity: 0.4, weight: 2 }).addTo(draftDisasterGroup);
+        }
+    });
+
+    map.on('mousemove', function(e) {
+        if (!isDrawing) return;
+        if (activeTool === 'pencil' && activeDraftLayer) {
+            pencilPoints.push(e.latlng);
+            activeDraftLayer.setLatLngs(pencilPoints);
+        } else if (activeTool === 'circle' && activeDraftLayer) {
+            const r = drawStartLatLng.distanceTo(e.latlng);
+            activeDraftLayer.setRadius(r);
+        } else if (activeTool === 'rectangle' && activeDraftLayer) {
+            activeDraftLayer.setBounds(L.latLngBounds(drawStartLatLng, e.latlng));
+        }
+    });
+
+    map.on('mouseup', function(e) {
+        if (!isDrawing) return;
+        isDrawing = false;
+        map.dragging.enable();
+
+        if (activeTool === 'pencil' && activeDraftLayer) {
+            if (pencilPoints.length > 1) {
+                addDisasterDraftItem('pencil', activeDraftLayer.toGeoJSON(), activeDraftLayer);
+            } else {
+                draftDisasterGroup.removeLayer(activeDraftLayer);
+            }
+        } else if (activeTool === 'circle' && activeDraftLayer) {
+            if (activeDraftLayer.getRadius() > 5) {
+                const geoData = {
+                    type: 'Circle',
+                    center: [drawStartLatLng.lat, drawStartLatLng.lng],
+                    radius: activeDraftLayer.getRadius()
+                };
+                addDisasterDraftItem('circle', geoData, activeDraftLayer);
+            } else {
+                draftDisasterGroup.removeLayer(activeDraftLayer);
+            }
+        } else if (activeTool === 'rectangle' && activeDraftLayer) {
+            addDisasterDraftItem('rectangle', activeDraftLayer.toGeoJSON(), activeDraftLayer);
+        }
+
+        activeDraftLayer = null;
+    });
+
+    map.on('click', function(e) {
+        if (activeTool === 'marker') {
+            const dType = normalizeDisasterType(activeDisaster === 'all' ? 'floods' : activeDisaster);
+            const markerLayer = L.marker(e.latlng, {
+                icon: getDisasterMarkerIcon(dType, activeHex)
+            }).addTo(draftDisasterGroup);
+
+            const geoData = {
+                type: 'Point',
+                coordinates: [e.latlng.lng, e.latlng.lat],
+                center: [e.latlng.lat, e.latlng.lng]
+            };
+            addDisasterDraftItem('marker', geoData, markerLayer);
+        } else if (activeTool === 'polygon') {
+            polyPoints.push(e.latlng);
+            if (!polyPreview) {
+                polyPreview = L.polygon(polyPoints, { color: activeHex, fillColor: activeHex, fillOpacity: 0.4, weight: 2 }).addTo(draftDisasterGroup);
+            } else {
+                polyPreview.setLatLngs(polyPoints);
+            }
+            updatePolyUi();
+        }
+    });
+
+    map.on('dblclick', function(e) {
+        if (activeTool === 'polygon' && polyPoints.length >= 3 && polyPreview) {
+            L.DomEvent.stopPropagation(e);
+            addDisasterDraftItem('polygon', polyPreview.toGeoJSON(), polyPreview);
+            polyPreview = null;
+            polyPoints = [];
+            updatePolyUi();
+        }
+    });
+
+    // Global Delete Single Marking function
+    window.deleteAdminDisasterMarking = function(markingId) {
+        if (!confirm('Are you sure you want to delete this disaster indicator from the database?')) return;
+        fetch(`/api/markings/${markingId}`, { method: 'DELETE' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    loadServerDisasterMarkings();
+                } else {
+                    alert(data.message || 'Error deleting marking');
+                }
+            })
+            .catch(err => console.error('Delete error:', err));
+    };
+
+    // Global Fly To Marking function
+    window.flyToAdminMarking = function(lat, lng, zoomLevel = 15) {
+        if (map && lat && lng) {
+            map.flyTo([lat, lng], zoomLevel, { duration: 1.2 });
+            document.getElementById('admin-map').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    };
+
+    // Render markings on map and in data table
+    function renderDisasterMarkings() {
+        savedDisasterGroup.clearLayers();
+
+        const currentActive = normalizeDisasterType(activeDisaster);
+        const filtered = (currentActive === 'all')
+            ? serverDisasterMarkings
+            : serverDisasterMarkings.filter(m => normalizeDisasterType(m.disaster_type) === currentActive);
+
+        // Update counts
+        const countMap = { floods: 0, cyclones: 0, tsunamis: 0, earthquakes: 0, winds: 0, rainfall: 0, landslides: 0 };
+        serverDisasterMarkings.forEach(m => {
+            const t = normalizeDisasterType(m.disaster_type);
+            if (countMap[t] !== undefined) countMap[t]++;
+        });
+
+        Object.keys(countMap).forEach(k => {
+            const el = document.getElementById(`count-${k}`);
+            if (el) el.textContent = countMap[k];
+        });
+        const allCountEl = document.getElementById('count-all');
+        if (allCountEl) allCountEl.textContent = serverDisasterMarkings.length;
+
+        const tableCountEl = document.getElementById('adm-table-count');
+        if (tableCountEl) tableCountEl.textContent = filtered.length;
+
+        // Render Map Layers
+        filtered.forEach(m => {
+            const dType = normalizeDisasterType(m.disaster_type);
+            const dMeta = DISASTER_META[dType] || { name: 'Floods', icon: '🌧️', color: '#0284c7' };
+            const hex = HEX_MAP[m.color] || HEX_MAP[m.risk_level] || '#16a34a';
             const geo = m.geojson_data;
             let item = null;
+            let centerLat = null;
+            let centerLng = null;
+
             if (m.shape_type === 'circle' && geo.center && geo.radius) {
-              item = L.circle(geo.center, { radius: geo.radius, color: hex, fillColor: hex, fillOpacity: 0.45, weight: 3 });
+                centerLat = geo.center[0];
+                centerLng = geo.center[1];
+                item = L.circle(geo.center, { radius: geo.radius, color: hex, fillColor: hex, fillOpacity: 0.45, weight: 3 });
             } else if (m.shape_type === 'marker' && geo) {
-              const latlng = geo.center || (geo.coordinates ? [geo.coordinates[1], geo.coordinates[0]] : null);
-              if (latlng) item = L.circleMarker(latlng, { radius: 10, fillColor: hex, color: '#fff', weight: 2, fillOpacity: 0.9 });
+                const latlng = geo.center || (geo.coordinates ? [geo.coordinates[1], geo.coordinates[0]] : null);
+                if (latlng) {
+                    centerLat = latlng[0];
+                    centerLng = latlng[1];
+                    item = L.marker(latlng, { icon: getDisasterMarkerIcon(dType, hex) });
+                }
             } else if (geo && (geo.type || geo.coordinates)) {
-              item = L.geoJSON(geo, { style: { color: hex, fillColor: hex, fillOpacity: 0.45, weight: m.shape_type === 'pencil' ? 4 : 2 } });
+                item = L.geoJSON(geo, { style: { color: hex, fillColor: hex, fillOpacity: m.shape_type === 'pencil' ? 0.3 : 0.45, weight: m.shape_type === 'pencil' ? 4 : 2 } });
+                try {
+                    const bounds = item.getBounds();
+                    const c = bounds.getCenter();
+                    centerLat = c.lat;
+                    centerLng = c.lng;
+                } catch(e) {}
             }
+
             if (item) {
-              item.bindPopup(`<b>${m.title}</b><br/>Safety Level: <strong style="color:${hex}">${m.risk_level.toUpperCase()}</strong>`);
-              item.addTo(map);
+                const badgeColor = hex;
+                const riskLabel = (m.risk_level || 'safe').toUpperCase();
+                item.bindPopup(`
+                    <div style="font-family:sans-serif;min-width:200px;">
+                        <div style="font-size:1.05em;font-weight:bold;color:#0f172a;display:flex;align-items:center;gap:4px;">
+                            ${dMeta.icon} ${m.title}
+                        </div>
+                        <div style="background:${badgeColor};color:white;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:bold;display:inline-block;margin:6px 0;">
+                            ${riskLabel} • ${dMeta.name}
+                        </div>
+                        ${m.description ? `<div style="font-size:12px;color:#334155;margin-bottom:6px;line-height:1.4;">${m.description}</div>` : ''}
+                        <div style="font-size:11px;color:#64748b;">Shape: ${m.shape_type.toUpperCase()} | By: ${m.created_by || 'Admin'}</div>
+                        <button type="button" onclick="deleteAdminDisasterMarking(${m.id})" style="background:#dc2626;color:white;border:none;padding:4px 10px;border-radius:5px;margin-top:8px;cursor:pointer;font-size:11px;font-weight:700;">
+                            🗑️ Delete Indicator
+                        </button>
+                    </div>
+                `);
+
+                item.on('click', function(ev) {
+                    if (activeTool === 'eraser') {
+                        L.DomEvent.stopPropagation(ev);
+                        window.deleteAdminDisasterMarking(m.id);
+                    }
+                });
+
+                item.addTo(savedDisasterGroup);
             }
-          });
+        });
+
+        // Render Data Table
+        const tbody = document.getElementById('disaster-markings-tbody');
+        if (tbody) {
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:2rem; color:#94a3b8; font-size:0.95rem;">No indicators marked for <strong>${currentActive === 'all' ? 'any disaster' : DISASTER_META[currentActive]?.name}</strong> yet. Use the toolbar above to add marks.</td></tr>`;
+            } else {
+                tbody.innerHTML = filtered.map(m => {
+                    const dType = normalizeDisasterType(m.disaster_type);
+                    const dMeta = DISASTER_META[dType] || { name: 'Floods', icon: '🌧️', color: '#0284c7' };
+                    const hex = HEX_MAP[m.color] || HEX_MAP[m.risk_level] || '#16a34a';
+                    const riskLabel = (m.risk_level || 'safe').toUpperCase();
+                    
+                    let lat = null, lng = null;
+                    if (m.geojson_data) {
+                        if (m.geojson_data.center) {
+                            lat = m.geojson_data.center[0];
+                            lng = m.geojson_data.center[1];
+                        } else if (m.geojson_data.coordinates && Array.isArray(m.geojson_data.coordinates)) {
+                            if (typeof m.geojson_data.coordinates[0] === 'number') {
+                                lat = m.geojson_data.coordinates[1];
+                                lng = m.geojson_data.coordinates[0];
+                            } else if (Array.isArray(m.geojson_data.coordinates[0]) && Array.isArray(m.geojson_data.coordinates[0][0])) {
+                                lat = m.geojson_data.coordinates[0][0][1];
+                                lng = m.geojson_data.coordinates[0][0][0];
+                            }
+                        }
+                    }
+
+                    return `
+                        <tr>
+                            <td style="font-weight:700; color:#0284c7;">#${m.id}</td>
+                            <td>
+                                <span style="background:${dMeta.color}15; color:${dMeta.color}; border:1px solid ${dMeta.color}40; padding:3px 8px; border-radius:12px; font-weight:700; display:inline-flex; align-items:center; gap:4px; font-size:0.82rem;">
+                                    ${dMeta.icon} ${dMeta.name}
+                                </span>
+                            </td>
+                            <td>
+                                <strong style="color:#0f172a; font-size:0.9rem;">${m.title}</strong>
+                                ${m.description ? `<div style="color:#64748b; font-size:0.8rem; margin-top:2px;">${m.description}</div>` : ''}
+                            </td>
+                            <td>
+                                <span style="background:${hex}; color:white; padding:2px 8px; border-radius:10px; font-size:0.75rem; font-weight:700;">
+                                    ${riskLabel}
+                                </span>
+                            </td>
+                            <td style="font-size:0.82rem; color:#475569; text-transform:capitalize;">${m.shape_type}</td>
+                            <td style="font-size:0.8rem; color:#64748b; white-space:nowrap;">${m.created_at ? m.created_at.slice(0, 16).replace('T', ' ') : ''}</td>
+                            <td style="font-size:0.82rem; color:#334155; font-weight:600;">${m.created_by || 'Admin'}</td>
+                            <td style="text-align:center; white-space:nowrap;">
+                                ${lat && lng ? `<button type="button" onclick="flyToAdminMarking(${lat}, ${lng})" style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; padding:4px 8px; border-radius:6px; font-weight:700; font-size:0.78rem; cursor:pointer; margin-right:4px;">📍 Fly To</button>` : ''}
+                                <button type="button" onclick="deleteAdminDisasterMarking(${m.id})" style="background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; padding:4px 8px; border-radius:6px; font-weight:700; font-size:0.78rem; cursor:pointer;">🗑️ Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
         }
-      })
-      .catch(e => console.error('Error loading zone markings:', e));
+    }
+
+    function loadServerDisasterMarkings() {
+        fetch('/api/markings')
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success' && Array.isArray(data.markings)) {
+                    serverDisasterMarkings = data.markings;
+                    renderDisasterMarkings();
+                }
+            })
+            .catch(e => console.error('Error loading disaster markings:', e));
+    }
+
+    loadServerDisasterMarkings();
+
+    // Save All Markings Button
+    const saveMarkingsBtn = document.getElementById('adm-save-btn');
+    if (saveMarkingsBtn) {
+        saveMarkingsBtn.addEventListener('click', function() {
+            if (unsavedDisasterMarkings.length === 0) {
+                alert('No draft markings to save! Choose a disaster category and draw or place marker pins on the map first.');
+                return;
+            }
+
+            const payload = unsavedDisasterMarkings.map(item => ({
+                disaster_type: normalizeDisasterType(item.disaster_type),
+                title: item.title,
+                description: item.description,
+                risk_level: item.risk_level,
+                color: item.color,
+                shape_type: item.shape_type,
+                geojson_data: item.geojson_data
+            }));
+
+            saveMarkingsBtn.disabled = true;
+            saveMarkingsBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+            fetch('/api/markings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ markings: payload })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    saveMarkingsBtn.disabled = false;
+                    saveMarkingsBtn.innerHTML = '<i class="fas fa-save"></i> 💾 Save Markings to Database';
+                    if (data.status === 'success') {
+                        alert(`✅ Successfully saved ${payload.length} disaster marking(s) to the database!`);
+                        draftDisasterGroup.clearLayers();
+                        unsavedDisasterMarkings = [];
+                        loadServerDisasterMarkings();
+                        updateAdminStatus();
+                    } else {
+                        alert(data.message || 'Error saving disaster markings');
+                    }
+                })
+                .catch(err => {
+                    saveMarkingsBtn.disabled = false;
+                    saveMarkingsBtn.innerHTML = '<i class="fas fa-save"></i> 💾 Save Markings to Database';
+                    console.error('Save error:', err);
+                    alert(`Error saving markings: ${err.message}`);
+                });
+        });
+    }
+
+    // Clear Draft Shapes Button
+    const clearDraftBtn = document.getElementById('adm-clear-draft-btn');
+    if (clearDraftBtn) {
+        clearDraftBtn.addEventListener('click', function() {
+            draftDisasterGroup.clearLayers();
+            unsavedDisasterMarkings = [];
+            if (polyPreview) polyPreview = null;
+            polyPoints = [];
+            updateAdminStatus();
+        });
+    }
+
+    // Delete Current Disaster DB Markings Button
+    const deleteDisasterBtn = document.getElementById('adm-delete-disaster-btn');
+    if (deleteDisasterBtn) {
+        deleteDisasterBtn.addEventListener('click', function() {
+            const targetDisaster = normalizeDisasterType(activeDisaster);
+            const targetName = targetDisaster === 'all' ? 'ALL natural disasters' : `${DISASTER_META[targetDisaster]?.name || targetDisaster}`;
+            if (!confirm(`🚨 Are you sure you want to delete all saved markings for ${targetName.toUpperCase()} from the database?`)) return;
+
+            const url = targetDisaster === 'all' ? '/api/markings/clear' : `/api/markings/clear?disaster=${targetDisaster}`;
+            fetch(url, { method: 'DELETE' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert(`✅ ${data.message}`);
+                        loadServerDisasterMarkings();
+                    } else {
+                        alert(data.message || 'Error clearing markings');
+                    }
+                })
+                .catch(err => console.error('Clear error:', err));
+        });
+    }
+
+    updateAdminStatus();
 });
 </script>
 {% endblock %}
+

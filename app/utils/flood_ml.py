@@ -353,4 +353,11 @@ def predict_flood(include_explanations=True):
                      "discharge) drove the flood-risk classification; LIME "
                      "explains the latest individual prediction."),
         },
+        "daily": __import__('app.utils.disaster_analytics', fromlist=['DisasterAnalyticsManager']).DisasterAnalyticsManager._generate_daily_series('floods'),
+        "monthly": __import__('app.utils.disaster_analytics', fromlist=['DisasterAnalyticsManager']).DisasterAnalyticsManager._generate_monthly_series('floods'),
+        "yearly": __import__('app.utils.disaster_analytics', fromlist=['DisasterAnalyticsManager']).DisasterAnalyticsManager._generate_yearly_series(
+            'floods',
+            __import__('app.utils.disaster_analytics', fromlist=['DisasterAnalyticsManager']).DisasterAnalyticsManager.load_data().get('floods', {}),
+            __import__('pickle').load(open(os.path.join(MODEL_DIR, "floods_model.pkl"), "rb")) if os.path.exists(os.path.join(MODEL_DIR, "floods_model.pkl")) else clf
+        ),
     }

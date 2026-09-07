@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: suraksha-kavach
+    env: python
+    runtime: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn wsgi:app --workers 1 --threads 4 --timeout 120 --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEATHER_CITY
+        value: Guntur
+      - key: WEATHER_LATITUDE
+        value: "16.3067"
+      - key: WEATHER_LONGITUDE
+        value: "80.4365"

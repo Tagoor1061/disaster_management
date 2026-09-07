@@ -6,10 +6,17 @@
 
 {% block content %}
 <nav class="main-navbar">
-    <img src="{{ url_for('static', filename='img/final_logo.png') }}" alt="Guntur Logo" class="logo" onerror="this.style.display='none'">
-    <span class="main-title">Suraksha Kavach
-        <div class="main-subtitle">DEPARTMENT OF GOVERNMENT MUNICIPAL CORPORATION </div>
-    </span>
+    <a href="{{ url_for('main.home') }}" class="main-navbar-brand">
+        <img src="{{ url_for('static', filename='img/final_logo.png') }}" alt="Guntur Logo" class="logo" onerror="this.style.display='none'">
+        <span class="main-title">Suraksha Kavach
+            <div class="main-subtitle">DEPARTMENT OF GOVERNMENT MUNICIPAL CORPORATION</div>
+        </span>
+    </a>
+    <div class="main-navbar-actions">
+        <button type="button" class="mobile-nav-toggle-btn" id="mobile-nav-toggle" aria-label="Open Navigation Menu">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
 </nav>
 
 <nav class="secondary-navbar">
@@ -72,31 +79,11 @@
         <p>Real-time river level tracking, drainage canal monitoring, automated flood risk mapping, and municipal emergency de-watering operations for Guntur Corporation.</p>
     </div>
 
-    <!-- Live Status Banner -->
-    <div class="status-card-box">
-        <div class="status-info">
-            <h3><i class="fas fa-tint"></i> Live Rainfall & Drainage Status</h3>
-            <p>Krishna River & City Drainage Canal System real-time depth monitoring.</p>
-            <div class="status-pills">
-                <span class="pill pill-green"><i class="fas fa-check-circle"></i> Flood Danger Level: Normal</span>
-                <span class="pill pill-blue"><i class="fas fa-cloud-showers-heavy"></i> City Rainfall: {{ weather.condition if weather and weather.condition else 'Light Rain / Advisory' }}</span>
-            </div>
-        </div>
-        <div class="status-actions">
-            <a href="{{ url_for('viewmap.view_map') }}" class="btn-detail-action btn-blue"><i class="fas fa-map-marked-alt"></i> Open Flood Risk Map</a>
-            <button class="btn-detail-action btn-green" onclick="subscribeToNotifications()"><i class="fas fa-bell"></i> Enable Flood Push Alerts</button>
-        </div>
-    </div>
-
-    <!-- Machine Learning Analytics & Predictive Chart -->
-    <div class="disaster-chart-widget" data-disaster="floods" id="chart-widget-floods"></div>
-
-    <!-- Flood Preparedness Unit — IMD + Open-Meteo + Google AI Dashboard -->
+    <!-- Official CWC/NWIC Flood Control Command Center & Hydrological Pipeline -->
     <div id="flood-preparedness-widget"></div>
-    <link rel="stylesheet" href="{{ url_for('static', filename='lib/leaflet.css') }}" />
-    <script src="{{ url_for('static', filename='lib/leaflet.js') }}"></script>
-    <script src="{{ url_for('static', filename='lib/chart.umd.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/FloodPreparednessUnit.js') }}"></script>
+
+    <!-- Universal Location-Based Flood Risk Search & Rate Engine -->
+    <div class="location-risk-search-widget" data-disaster="floods"></div>
 
     <!-- Key Information Grid -->
     <div class="detail-grid">
@@ -158,12 +145,13 @@
 
 <style>
 .disaster-detail-container {
-    max-width: 1100px;
+    max-width: 1560px;
+    width: 97%;
     margin: 2rem auto;
-    padding: 2rem;
-    background: rgba(255,255,255,0.96);
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    padding: 2.2rem;
+    background: rgba(255,255,255,0.98);
+    border-radius: 18px;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.12);
 }
 
 .detail-hero {
@@ -389,4 +377,5 @@
     font-weight: 700;
 }
 </style>
+<script src="{{ url_for('static', filename='js/FloodPreparednessUnit.js') }}"></script>
 {% endblock %}

@@ -245,6 +245,13 @@
             attribution: '© OpenStreetMap | IMD Rainfall Preparedness'
         }).addTo(map);
 
+        if (typeof L.control.locationSearch === 'function') {
+            L.control.locationSearch({
+                position: 'topright',
+                placeholder: '🔍 Search location in rainfall map...'
+            }).addTo(map);
+        }
+
         // ---- Layer 1: rainfall heatmap circles (district intensity zones) ----
         const districts = live?.district_rainfall?.districts || [];
         districts.forEach(d => {

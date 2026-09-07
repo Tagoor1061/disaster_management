@@ -30,7 +30,24 @@ def get_rainfall_data():
 
 @bp.route('/predict/rainfall', methods=['GET'])
 def predict_rainfall_endpoint():
-    """AI/ML heavy-rainfall prediction (LSTM + SARIMA + SHAP/LIME)."""
+    """AI/ML heavy-rainfall prediction with optional calendar day/month/year/range query."""
+    from flask import request
+    from app.utils.disaster_analytics import DisasterAnalyticsManager
+    target_date = request.args.get('date')
+    target_month = request.args.get('month')
+    target_year = request.args.get('year')
+    start_date = request.args.get('from')
+    end_date = request.args.get('to')
+
+    if target_date:
+        return jsonify(DisasterAnalyticsManager.predict_target_date('rainfall', target_date))
+    elif target_month:
+        return jsonify(DisasterAnalyticsManager.predict_target_month('rainfall', target_month))
+    elif target_year:
+        return jsonify(DisasterAnalyticsManager.predict_target_year('rainfall', target_year))
+    elif start_date and end_date:
+        return jsonify(DisasterAnalyticsManager.predict_custom_range('rainfall', start_date, end_date))
+
     try:
         return jsonify(predict_rainfall(include_explanations=True))
     except Exception as exc:

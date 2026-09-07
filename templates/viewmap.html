@@ -1,71 +1,124 @@
 {% extends 'base.html' %}
 
-{% block title %}Interactive City Map{% endblock %}
+{% block title %}Interactive City Map — Multi-Hazard Disaster GIS{% endblock %}
 
 {% block content %}
-<section class="container" style="padding:2rem;">
-  <h1>Interactive City Map - Guntur Risk & Service Zones</h1>
+<nav class="main-navbar">
+    <a href="{{ url_for('main.home') }}" class="main-navbar-brand">
+        <img src="{{ url_for('static', filename='img/final_logo.png') }}" alt="Guntur Logo" class="logo" onerror="this.style.display='none'">
+        <span class="main-title">Suraksha Kavach
+            <div class="main-subtitle">DEPARTMENT OF GOVERNMENT MUNICIPAL CORPORATION</div>
+        </span>
+    </a>
+    <div class="main-navbar-actions">
+        <button type="button" class="mobile-nav-toggle-btn" id="mobile-nav-toggle" aria-label="Open Navigation Menu">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+</nav>
+
+<section class="container" style="padding:1.8rem 1.2rem; max-width: 1560px; width: 97%; margin: 1.5rem auto;">
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
+    <div>
+      <h1 style="margin:0; font-size:1.9rem; color:#1e293b;">🗺️ Interactive City Map — Multi-Hazard Risk & Service Zones</h1>
+      <p style="margin:0.3rem 0 0; color:#64748b; font-size:0.95rem;">Real-time GIS visualization for Floods, Cyclones, Tsunamis, Earthquakes, Winds, Rainfall, Landslides & Civic Services</p>
+    </div>
+    <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+      <a href="{{ url_for('main.home') }}" style="text-decoration:none; padding:8px 14px; border-radius:8px; font-weight:600; background:#f1f5f9; color:#334155; border:1px solid #cbd5e1; display:inline-flex; align-items:center; gap:0.3rem;">🏠 Home</a>
+      {% if current_user.is_authenticated and current_user.role == 'admin' %}
+        <a href="{{ url_for('main.admin_dashboard') }}" class="btn-primary" style="text-decoration:none; padding:8px 16px; border-radius:8px; font-weight:700; background:#0284c7; color:white; display:inline-flex; align-items:center; gap:0.3rem;">
+          👨‍💼 Admin Dashboard
+        </a>
+      {% endif %}
+    </div>
+  </div>
 
   <!-- Leaflet CSS/JS (CDN) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   {% if current_user.is_authenticated and current_user.role == 'admin' %}
-  <!-- Admin Drawing Toolbar -->
+  <!-- Admin Multi-Hazard Drawing Toolbar -->
   <div id="admin-drawing-toolbar" class="admin-toolbar-card">
     <div class="toolbar-header">
-      <h3>🛠️ Admin Area Risk Marking Controls</h3>
+      <h3 style="display:flex; align-items:center; gap:0.5rem; margin:0; color:#0284c7;">
+        <span>🛠️</span> Admin Multi-Hazard Risk Marking Controls
+      </h3>
       <span class="admin-badge">Admin Mode Active</span>
     </div>
 
     <div class="toolbar-controls">
-      <!-- Tool Selection -->
+      <!-- 1. Disaster Category Selection -->
+      <div class="control-group" style="width:100%;">
+        <label><strong>1. Select Disaster Category:</strong></label>
+        <div class="btn-group" id="vm-disaster-btns" style="overflow-x:auto; flex-wrap:nowrap; -webkit-overflow-scrolling:touch; padding-bottom:4px;">
+          <button type="button" class="tool-btn active vm-disaster-btn" data-disaster="floods">🌧️ Floods</button>
+          <button type="button" class="tool-btn vm-disaster-btn" data-disaster="cyclones">🌀 Cyclones</button>
+          <button type="button" class="tool-btn vm-disaster-btn" data-disaster="tsunamis">🌊 Tsunamis</button>
+          <button type="button" class="tool-btn vm-disaster-btn" data-disaster="earthquakes">🏚️ Earthquakes</button>
+          <button type="button" class="tool-btn vm-disaster-btn" data-disaster="winds">💨 Severe Winds</button>
+          <button type="button" class="tool-btn vm-disaster-btn" data-disaster="rainfall">🌧️ Rainfall</button>
+          <button type="button" class="tool-btn vm-disaster-btn" data-disaster="landslides">⛰️ Landslides</button>
+        </div>
+      </div>
+
+      <!-- 2. Tool Selection -->
       <div class="control-group">
-        <label><strong>1. Marking Tool:</strong></label>
+        <label><strong>2. Marking Tool:</strong></label>
         <div class="btn-group tool-buttons">
-          <button type="button" class="tool-btn active" data-tool="pencil" title="Freehand Pencil Line">✏️ Pencil</button>
-          <button type="button" class="tool-btn" data-tool="marker" title="Place Marker Pin">📍 Marker</button>
-          <button type="button" class="tool-btn" data-tool="circle" title="Draw Circle Zone">⭕ Circle</button>
-          <button type="button" class="tool-btn" data-tool="rectangle" title="Draw Rectangle Zone">⬛ Rectangle</button>
+          <button type="button" class="tool-btn active" data-tool="marker" title="Place Marker Pin">📍 Marker Pin</button>
+          <button type="button" class="tool-btn" data-tool="pencil" title="Freehand Line/Border">✏️ Pencil</button>
+          <button type="button" class="tool-btn" data-tool="circle" title="Draw Circular Hazard Zone">⭕ Circle</button>
+          <button type="button" class="tool-btn" data-tool="rectangle" title="Draw Sector Rectangle">⬛ Rectangle</button>
           <button type="button" class="tool-btn" data-tool="polygon" title="Click points to draw Polygon">⬡ Polygon</button>
           <button type="button" class="tool-btn eraser-btn" data-tool="eraser" title="Click shape on map to delete it">🧹 Eraser</button>
         </div>
       </div>
 
-      <!-- Risk Level & Color Selection -->
+      <!-- 3. Risk Level & Color Selection -->
       <div class="control-group">
-        <label><strong>2. Safety Level & Color:</strong></label>
+        <label><strong>3. Risk Severity:</strong></label>
         <div class="btn-group color-buttons">
-          <button type="button" class="color-btn active green" data-risk="safe" data-color="green" data-hex="#2e7d32">
-            🟢 Safe Zone (Green)
+          <button type="button" class="color-btn active green" data-risk="safe" data-color="green" data-hex="#16a34a">
+            🟢 Safe / Low Risk
           </button>
-          <button type="button" class="color-btn yellow" data-risk="moderate" data-color="yellow" data-hex="#f9a825">
-            🟡 Moderate Zone (Yellow)
+          <button type="button" class="color-btn yellow" data-risk="moderate" data-color="yellow" data-hex="#d97706">
+            🟡 Moderate Risk
           </button>
-          <button type="button" class="color-btn red" data-risk="danger" data-color="red" data-hex="#d32f2f">
-            🔴 Danger Zone (Red)
+          <button type="button" class="color-btn red" data-risk="danger" data-color="red" data-hex="#dc2626">
+            🔴 High / Danger
+          </button>
+          <button type="button" class="color-btn purple" data-risk="severe" data-color="purple" data-hex="#7c3aed">
+            🟣 Critical / Evacuation
           </button>
         </div>
       </div>
 
+      <!-- 4. Title & Advisory Inputs -->
+      <div class="control-group" style="flex:1; min-width:260px;">
+        <label><strong>4. Zone Title & Citizen Advisory:</strong></label>
+        <input type="text" id="vm-marker-title" placeholder="Zone title (e.g. Flood Inundation Area)" style="width:100%; box-sizing:border-box; padding:6px 10px; border:1.5px solid #cbd5e1; border-radius:6px; font-size:0.88rem; margin-bottom:4px;" value="Flood Risk Zone (Marker)">
+        <input type="text" id="vm-marker-advisory" placeholder="Advisory notes for citizens..." style="width:100%; box-sizing:border-box; padding:6px 10px; border:1.5px solid #cbd5e1; border-radius:6px; font-size:0.88rem;">
+      </div>
+
       <!-- Action Buttons -->
-      <div class="control-group actions-group">
+      <div class="control-group actions-group" style="width:100%;">
         <div class="btn-group">
           <button type="button" id="save-markings-btn" class="action-btn save-btn">💾 Save All Markings</button>
           <button type="button" id="clear-draft-btn" class="action-btn clear-btn">🔄 Clear Draft Shapes</button>
-          <button type="button" id="delete-all-db-btn" class="action-btn danger-action-btn">🗑️ Delete All DB Markings</button>
+          <button type="button" id="delete-all-db-btn" class="action-btn danger-action-btn">🗑️ Delete Filtered DB Markings</button>
         </div>
       </div>
     </div>
     <div id="drawing-status" class="status-msg">
-      <b>Pencil Mode:</b> Click and drag on map to draw freehand lines/shapes in Green (Safe), Yellow (Moderate), or Red (Danger). Click "Save All Markings" when done.
+      <b>Marker Mode:</b> Click on map to place a <strong>Floods</strong> marker pin in Green (Safe / Low Risk). Click "Save All Markings" when done.
     </div>
   </div>
 
   <style>
     .admin-toolbar-card {
       background: #ffffff;
-      border: 2px solid #2E8B57;
+      border: 2px solid #0284c7;
       border-radius: 12px;
       padding: 1.2rem;
       margin-bottom: 1.5rem;
@@ -79,13 +132,8 @@
       padding-bottom: 0.5rem;
       border-bottom: 1px solid #e0e0e0;
     }
-    .toolbar-header h3 {
-      margin: 0;
-      color: #2E8B57;
-      font-size: 1.2rem;
-    }
     .admin-badge {
-      background: #2E8B57;
+      background: #0284c7;
       color: white;
       padding: 4px 12px;
       border-radius: 20px;
@@ -95,7 +143,7 @@
     .toolbar-controls {
       display: flex;
       flex-wrap: wrap;
-      gap: 1.5rem;
+      gap: 1.2rem;
       align-items: flex-start;
     }
     .control-group {
@@ -109,86 +157,52 @@
       gap: 6px;
     }
     .tool-btn, .color-btn, .action-btn {
-      padding: 8px 14px;
-      border: 2px solid #ccc;
+      padding: 7px 12px;
+      border: 2px solid #cbd5e1;
       border-radius: 8px;
-      background: #f8f9fa;
+      background: #f8fafc;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       font-weight: 600;
       transition: all 0.2s ease;
     }
     .tool-btn:hover, .color-btn:hover {
-      background: #e9ecef;
-      border-color: #999;
+      background: #e2e8f0;
+      border-color: #94a3b8;
     }
     .tool-btn.active {
-      background: #1976d2;
+      background: #0284c7;
       color: white;
-      border-color: #1565c0;
-      box-shadow: 0 2px 6px rgba(25, 118, 210, 0.3);
+      border-color: #0369a1;
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
     }
     .tool-btn.eraser-btn.active {
-      background: #d32f2f;
+      background: #dc2626;
       color: white;
-      border-color: #b71c1c;
+      border-color: #b91c1c;
     }
-    .color-btn.green {
-      border-color: #2e7d32;
-      color: #2e7d32;
-    }
-    .color-btn.green.active {
-      background: #2e7d32;
-      color: white;
-    }
-    .color-btn.yellow {
-      border-color: #f9a825;
-      color: #f57f17;
-    }
-    .color-btn.yellow.active {
-      background: #f9a825;
-      color: black;
-    }
-    .color-btn.red {
-      border-color: #d32f2f;
-      color: #d32f2f;
-    }
-    .color-btn.red.active {
-      background: #d32f2f;
-      color: white;
-    }
-    .save-btn {
-      background: #2e7d32;
-      color: white;
-      border-color: #1b5e20;
-    }
-    .save-btn:hover {
-      background: #1b5e20;
-    }
-    .clear-btn {
-      background: #ff9800;
-      color: white;
-      border-color: #e65100;
-    }
-    .clear-btn:hover {
-      background: #e65100;
-    }
-    .danger-action-btn {
-      background: #d32f2f;
-      color: white;
-      border-color: #b71c1c;
-    }
-    .danger-action-btn:hover {
-      background: #b71c1c;
-    }
+    .color-btn.green { border-color: #16a34a; color: #16a34a; }
+    .color-btn.green.active { background: #16a34a; color: white; }
+    .color-btn.yellow { border-color: #d97706; color: #d97706; }
+    .color-btn.yellow.active { background: #d97706; color: white; }
+    .color-btn.red { border-color: #dc2626; color: #dc2626; }
+    .color-btn.red.active { background: #dc2626; color: white; }
+    .color-btn.purple { border-color: #7c3aed; color: #7c3aed; }
+    .color-btn.purple.active { background: #7c3aed; color: white; }
+    .save-btn { background: #16a34a; color: white; border-color: #15803d; }
+    .save-btn:hover { background: #15803d; }
+    .clear-btn { background: #f59e0b; color: white; border-color: #d97706; }
+    .clear-btn:hover { background: #d97706; }
+    .danger-action-btn { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+    .danger-action-btn:hover { background: #fecaca; }
     .status-msg {
       margin-top: 0.8rem;
       padding: 8px 12px;
-      background: #e8f5e9;
+      background: #e0f2fe;
       border-radius: 6px;
       font-size: 0.9rem;
-      color: #1b5e20;
-      border: 1px solid #c8e6c9;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
     }
   </style>
   {% endif %}
@@ -197,53 +211,106 @@
     window.IS_ADMIN_USER = {{ (current_user.is_authenticated and current_user.role == 'admin')|tojson|safe }};
   </script>
 
-  <div id="map" style="height:70vh; width:100%; border-radius:12px; overflow:hidden; border:1px solid rgba(0,0,0,0.08);"></div>
+  <!-- Citizen & Admin Multi-Hazard Filter Tabs -->
+  <div style="margin-bottom: 1rem; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 0.8rem 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem; flex-wrap:wrap; gap:0.5rem;">
+      <span style="font-weight:700; font-size:0.85rem; color:#334155; text-transform:uppercase; letter-spacing:0.5px;">
+        🎯 Filter Map by Disaster Type:
+      </span>
+      <span id="vm-active-filter-badge" style="font-size:0.82rem; color:#64748b; font-weight:600;">Showing All Hazards</span>
+    </div>
+    <div style="display:flex; overflow-x:auto; flex-wrap:nowrap; -webkit-overflow-scrolling:touch; gap:6px; padding-bottom:4px;" id="citizen-disaster-filter-tabs">
+      <button type="button" class="vm-filter-tab active" data-filter="all">🌐 All Disasters (<span id="c-count-all">0</span>)</button>
+      <button type="button" class="vm-filter-tab" data-filter="floods">🌧️ Floods (<span id="c-count-floods">0</span>)</button>
+      <button type="button" class="vm-filter-tab" data-filter="cyclones">🌀 Cyclones (<span id="c-count-cyclones">0</span>)</button>
+      <button type="button" class="vm-filter-tab" data-filter="tsunamis">🌊 Tsunamis (<span id="c-count-tsunamis">0</span>)</button>
+      <button type="button" class="vm-filter-tab" data-filter="earthquakes">🏚️ Earthquakes (<span id="c-count-earthquakes">0</span>)</button>
+      <button type="button" class="vm-filter-tab" data-filter="winds">💨 Winds (<span id="c-count-winds">0</span>)</button>
+      <button type="button" class="vm-filter-tab" data-filter="rainfall">🌧️ Rainfall (<span id="c-count-rainfall">0</span>)</button>
+      <button type="button" class="vm-filter-tab" data-filter="landslides">⛰️ Landslides (<span id="c-count-landslides">0</span>)</button>
+    </div>
+  </div>
 
-  <div style="margin-top:2rem; background: #f5f5f5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #1976d2;">
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+  <style>
+    .vm-filter-tab {
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1.5px solid #cbd5e1;
+      background: #f8fafc;
+      color: #334155;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .vm-filter-tab:hover {
+      background: #e2e8f0;
+    }
+    .vm-filter-tab.active {
+      background: #0284c7;
+      color: #ffffff;
+      border-color: #0369a1;
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
+    }
+  </style>
+
+  <div style="margin-bottom: 1rem;">
+    <div id="viewmap-search-container"></div>
+  </div>
+
+  <div id="map" style="height:72vh; width:100%; border-radius:12px; overflow:hidden; border:1px solid rgba(0,0,0,0.12); box-shadow:0 4px 20px rgba(0,0,0,0.08);"></div>
+
+  <div style="margin-top:2rem; background: #ffffff; padding: 1.8rem; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 5px solid #0284c7;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
       <!-- Risk Level Legend -->
       <div>
-        <h3 style="margin-top: 0; color: #1976d2;">📍 Flood Risk Zones</h3>
+        <h3 style="margin-top: 0; color: #0284c7; font-size:1.15rem; display:flex; align-items:center; gap:0.4rem;">
+          <span>🎨</span> Multi-Hazard Safety & Risk Severities
+        </h3>
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-          <div style="width: 30px; height: 30px; background: #d32f2f; border-radius: 3px;"></div>
-          <span><b>Red - High Risk Zone</b><br/><small style="color: #666;">Depth ≥ 5m, prone to flooding</small></span>
+          <div style="width: 26px; height: 26px; background: #7c3aed; border-radius: 4px;"></div>
+          <span><b>Purple — Critical / Evacuation Zone</b><br/><small style="color: #64748b;">Immediate life-safety danger, mandatory relocation order</small></span>
         </div>
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-          <div style="width: 30px; height: 30px; background: #f9a825; border-radius: 3px;"></div>
-          <span><b>Yellow - Moderate Risk Zone</b><br/><small style="color: #666;">Depth 2-5m, occasional flooding</small></span>
+          <div style="width: 26px; height: 26px; background: #dc2626; border-radius: 4px;"></div>
+          <span><b>Red — High Danger Zone</b><br/><small style="color: #64748b;">Severe hazard risk (deep flooding, gale winds, slope collapse)</small></span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+          <div style="width: 26px; height: 26px; background: #d97706; border-radius: 4px;"></div>
+          <span><b>Yellow — Moderate Risk / Watch</b><br/><small style="color: #64748b;">Advisory in effect, stay alert and follow municipal instructions</small></span>
         </div>
         <div style="display: flex; align-items: center; gap: 10px;">
-          <div style="width: 30px; height: 30px; background: #2e7d32; border-radius: 3px;"></div>
-          <span><b>Green - Safe Zone</b><br/><small style="color: #666;">Depth &lt; 2m, elevated/safe area</small></span>
+          <div style="width: 26px; height: 26px; background: #16a34a; border-radius: 4px;"></div>
+          <span><b>Green — Safe / All Clear Zone</b><br/><small style="color: #64748b;">Elevated ground, secure area, standard municipal operations</small></span>
         </div>
-        {% if request.args.get('select') %}
-        <p style="margin-top: 15px; padding: 10px; background: #e3f2fd; border-radius: 4px; font-size: 0.9rem;">
-          <b>📌 Location Selection Mode:</b> Click on the map to select a location, then confirm.
-        </p>
-        {% endif %}
       </div>
 
-      <!-- Landmarks Legend -->
+      <!-- Disaster Categories Legend -->
       <div>
-        <h3 style="margin-top: 0; color: #1976d2;">🏢 Key Landmarks & Services</h3>
-        <div style="font-size: 0.95rem; line-height: 1.8;">
-          <div><span style="font-size: 1.2em;">🏥</span> <b>Hospital</b> - Guntur Medical College</div>
-          <div><span style="font-size: 1.2em;">🏛️</span> <b>Admin</b> - Municipal Office</div>
-          <div><span style="font-size: 1.2em;">🚌</span> <b>Transport</b> - Railway & Bus Stations</div>
-          <div><span style="font-size: 1.2em;">🏪</span> <b>Market</b> - Central Business Area</div>
-          <div><span style="font-size: 1.2em;">🚨</span> <b>Emergency</b> - Police & Rescue</div>
-          <div style="margin-top: 10px; padding: 8px; background: #e8f5e9; border-radius: 4px;">
-            <span style="font-size: 1.2em;">📍</span> <b>Blue Pulsing Dot</b> - Your Current Location (Live GPS)
-          </div>
+        <h3 style="margin-top: 0; color: #0284c7; font-size:1.15rem; display:flex; align-items:center; gap:0.4rem;">
+          <span>🛡️</span> Natural Disaster Icon Indicators
+        </h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.88rem; line-height: 1.7;">
+          <div><span style="font-size: 1.2em;">🌧️</span> <b>Floods</b> — Inundation Area</div>
+          <div><span style="font-size: 1.2em;">🌀</span> <b>Cyclones</b> — Storm Surge</div>
+          <div><span style="font-size: 1.2em;">🌊</span> <b>Tsunamis</b> — Coastal Line</div>
+          <div><span style="font-size: 1.2em;">🏚️</span> <b>Earthquakes</b> — Seismic Fault</div>
+          <div><span style="font-size: 1.2em;">💨</span> <b>Winds</b> — Gale Gust Warning</div>
+          <div><span style="font-size: 1.2em;">🌧️</span> <b>Rainfall</b> — Cloudburst Zone</div>
+          <div><span style="font-size: 1.2em;">⛰️</span> <b>Landslides</b> — Slope Failure</div>
+          <div><span style="font-size: 1.2em;">🏥</span> <b>Relief/Medical</b> — Response Unit</div>
+        </div>
+        <div style="margin-top: 12px; padding: 8px 12px; background: #e0f2fe; border-radius: 6px; font-size:0.85rem; color:#0369a1;">
+          <span style="font-size: 1.1em;">📍</span> <b>Blue Pulsing Dot</b> — Your Current Live Location (GPS)
         </div>
       </div>
     </div>
 
-    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #ddd; font-size: 0.9rem; color: #666;">
+    <div style="margin-top: 1.5rem; padding-top: 1.2rem; border-top: 1px solid #e2e8f0; font-size: 0.88rem; color: #64748b;">
       <p style="margin: 0;">
-        💡 <b>Tips:</b> Hover over colored zones to see details • Click landmarks for more info • Use +/- or scroll to zoom •
+        💡 <b>Tips:</b> Click disaster tabs to filter markers • Hover or tap any colored zone/marker to view the official municipal advisory • Use +/- or scroll to zoom •
         {% if not request.args.get('select') %}
-        <a href="?select=1" style="color: #1976d2; text-decoration: none;">Select a location on the map</a>
+        <a href="?select=1" style="color: #0284c7; font-weight:700; text-decoration: none;">Select a location on the map</a>
         {% endif %}
       </p>
     </div>
@@ -252,6 +319,7 @@
 
 <script src="{{ url_for('static', filename='js/viewmap.js') }}"></script>
 {% endblock %}
+
 
 
 

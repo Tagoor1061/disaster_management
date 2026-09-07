@@ -402,4 +402,11 @@ def predict_rainfall(include_explanations=True):
                      "rainfall lags) drove the forecast; LIME explains the latest "
                      "individual prediction."),
         },
+        "daily": __import__('app.utils.disaster_analytics', fromlist=['DisasterAnalyticsManager']).DisasterAnalyticsManager._generate_daily_series('rainfall'),
+        "monthly": __import__('app.utils.disaster_analytics', fromlist=['DisasterAnalyticsManager']).DisasterAnalyticsManager._generate_monthly_series('rainfall'),
+        "yearly": __import__('app.utils.disaster_analytics', fromlist=['DisasterAnalyticsManager']).DisasterAnalyticsManager._generate_yearly_series(
+            'rainfall',
+            __import__('app.utils.disaster_analytics', fromlist=['DisasterAnalyticsManager']).DisasterAnalyticsManager.load_data().get('rainfall', {}),
+            __import__('pickle').load(open(os.path.join(MODEL_DIR, "rainfall_model.pkl"), "rb")) if os.path.exists(os.path.join(MODEL_DIR, "rainfall_model.pkl")) else model
+        ),
     }

@@ -415,4 +415,11 @@ def predict_landslide(include_explanations=True):
                      "classification; LIME explains the latest individual "
                      "prediction."),
         },
+        "daily": __import__('app.utils.disaster_analytics', fromlist=['DisasterAnalyticsManager']).DisasterAnalyticsManager._generate_daily_series('landslides'),
+        "monthly": __import__('app.utils.disaster_analytics', fromlist=['DisasterAnalyticsManager']).DisasterAnalyticsManager._generate_monthly_series('landslides'),
+        "yearly": __import__('app.utils.disaster_analytics', fromlist=['DisasterAnalyticsManager']).DisasterAnalyticsManager._generate_yearly_series(
+            'landslides',
+            __import__('app.utils.disaster_analytics', fromlist=['DisasterAnalyticsManager']).DisasterAnalyticsManager.load_data().get('landslides', {}),
+            __import__('pickle').load(open(os.path.join(MODEL_DIR, "landslides_model.pkl"), "rb")) if os.path.exists(os.path.join(MODEL_DIR, "landslides_model.pkl")) else clf
+        ),
     }

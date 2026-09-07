@@ -29,7 +29,24 @@ def get_wind_data():
 
 @bp.route("/predict/wind", methods=["GET"])
 def predict_wind_endpoint():
-    """AI/ML severe-wind prediction (classifier + ARIMA + SHAP/LIME)."""
+    """AI/ML severe-wind prediction with optional calendar day/month/year/range query."""
+    from flask import request
+    from app.utils.disaster_analytics import DisasterAnalyticsManager
+    target_date = request.args.get('date')
+    target_month = request.args.get('month')
+    target_year = request.args.get('year')
+    start_date = request.args.get('from')
+    end_date = request.args.get('to')
+
+    if target_date:
+        return jsonify(DisasterAnalyticsManager.predict_target_date('winds', target_date))
+    elif target_month:
+        return jsonify(DisasterAnalyticsManager.predict_target_month('winds', target_month))
+    elif target_year:
+        return jsonify(DisasterAnalyticsManager.predict_target_year('winds', target_year))
+    elif start_date and end_date:
+        return jsonify(DisasterAnalyticsManager.predict_custom_range('winds', start_date, end_date))
+
     try:
         return jsonify(predict_wind(include_explanations=True))
     except Exception as exc:
