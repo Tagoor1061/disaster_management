@@ -26,5 +26,5 @@ COPY . .
 # Expose port
 EXPOSE 5000
 
-# Run with Gunicorn WSGI server
-CMD ["gunicorn", "wsgi:app", "--workers", "1", "--threads", "4", "--timeout", "120", "--bind", "0.0.0.0:5000"]
+# Run database migrations and start Gunicorn WSGI server
+CMD ["sh", "-c", "flask db upgrade && gunicorn wsgi:app --workers 1 --threads 4 --timeout 120 --bind 0.0.0.0:$PORT"]
