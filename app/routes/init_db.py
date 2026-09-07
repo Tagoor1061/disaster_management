@@ -20,30 +20,38 @@ def ensure_schema_updated():
 
 def seed_admin_users():
     ensure_schema_updated()
-    # Insert or update default admin accounts
+    # Insert default admin accounts only if they do not already exist
     admin1_email = 'tagoorncc10@gmail.com'
     admin2_email = 'archanasenapathi63@gmail.com'
+    created = False
 
     # Admin 1
     admin1 = User.query.filter((User.email == admin1_email) | (User.username == 'admin1')).first()
     if not admin1:
         admin1 = User(username='admin1', email=admin1_email, role='admin')
+        admin1.set_password('Nani10@gmail.com')
         db.session.add(admin1)
-    admin1.email = admin1_email
-    admin1.set_password('Nani10@gmail.com')
-    admin1.role = 'admin'
+        created = True
+    elif admin1.role != 'admin':
+        admin1.role = 'admin'
+        created = True
 
     # Admin 2
     admin2 = User.query.filter((User.email == admin2_email) | (User.username == 'admin2')).first()
     if not admin2:
         admin2 = User(username='admin2', email=admin2_email, role='admin')
+        admin2.set_password('44')
         db.session.add(admin2)
-    admin2.email = admin2_email
-    admin2.set_password('44')
-    admin2.role = 'admin'
+        created = True
+    elif admin2.role != 'admin':
+        admin2.role = 'admin'
+        created = True
 
-    db.session.commit()
-    print("[SUCCESS] Admin accounts seeded successfully!")
+    if created:
+        db.session.commit()
+        print("[SUCCESS] Admin accounts initialized successfully!")
+    else:
+        print("[INFO] Admin accounts already exist; preserving existing credentials.")
 
 if __name__ == "__main__":
     app = create_app()

@@ -22,7 +22,7 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # External service keys. Keep real values in .env, not in source control.
-    NEWS_API_KEY = os.getenv('NEWS_API_KEY', 'ec55f5b477c64bc193309f58a060e03e')
+    NEWS_API_KEY = os.getenv('NEWS_API_KEY', '')
     OPENWEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY', '')
     WEATHER_LATITUDE = float(os.getenv('WEATHER_LATITUDE', '16.3067'))
     WEATHER_LONGITUDE = float(os.getenv('WEATHER_LONGITUDE', '80.4365'))
